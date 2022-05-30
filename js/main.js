@@ -115,8 +115,8 @@ var availableLangs = ["en", "es", "el", "ar", "pt"];
  *	Init script
  */
 // Enables caching of loaded javascript before loading resources
-
-	if ($.jStorage.get("language") == null) {
+const laStorage = JSON.parse(localStorage.jStorage)
+	if ( laStorage.language == null) {
 		setDefaultLanguage();
 	}
 	$.getScript(scriptURL + "lang/" + $.jStorage.get("language") + '.js', function() {
