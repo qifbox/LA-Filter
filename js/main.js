@@ -117,7 +117,7 @@ var availableLangs = ["en", "es", "el", "ar", "pt"];
 // Enables caching of loaded javascript before loading resources
 if ( !localStorage.jStorage ) {
 	const jStorage = {}
-	localStorage.setItem( JSON.stringify( "jStorage", jStorage ) )
+	localStorage.setItem( "jStorage", JSON.stringify( jStorage ) )
 	setDefaultLanguage()
 } else {
 	const jStorage = JSON.parse( localStorage.getItem( "jStorage" ) )
