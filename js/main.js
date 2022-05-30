@@ -8,7 +8,7 @@
  */
 var version = "1.10";
 var scriptName = "LA Enhancer"
-var scriptURL = "https://ntoombs19.github.io/LA-Enhancer/";
+var scriptURL = "https://github.com/UnrecognizedBR/LA-Filter";
 var updateNotesURL = "http://forum.tribalwars.net/showthread.php?266604-ntoombs19-s-FA-Filter&p=6785655&viewfull=1#post6785655";
 var working = true;
 var resourcesLoaded = false;
@@ -109,7 +109,7 @@ var keyPressSettings = {
 	"priorityThreeButton": "Skip",
 	"defaultButton": "Skip"
 };
-var availableLangs = ["en", "es", "el", "ar", "it"];
+var availableLangs = ["en", "es", "el", "ar", "pt"];
 
 /**********************************************************************
  *	Init script
