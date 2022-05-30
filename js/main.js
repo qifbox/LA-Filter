@@ -1431,22 +1431,23 @@ function setDefaultLanguage() {
 	if(url.length == 3)
 		url.shift();
 	var domain = url.join('.');
+	const jStorage = JSON.parse( localStorage.getItem( "jStorage" ) )
 	switch (domain) {
 		//case "die-staemme.de", "staemme.ch":
 		//	$.jStorage.set("language", "de");//german
 		//	break;
-		//case "tribalwars.nl":
-		//	$.jStorage.set("language", "nl");//dutch
-		//	break;
+		case "tribalwars.nl":
+			jStorage.language = "nl"  //dutch
+			break;
 		//case "plemiona.pl":
 		//	$.jStorage.set("language", "pl");//polish
 		//	break;
 		//case "tribalwars.se":
 		//	$.jStorage.set("language", "sv");//swedish
 		//	break;
-		//case "tribalwars.com.br", "tribalwars.com.pt":
-		//	$.jStorage.set("language", "pt");//portuguese
-		//	break;
+		case "tribalwars.com.br", "tribalwars.com.pt":
+			jStorage.language = "pt"  //portuguese
+			break;
 		//case "divokekmeny.cz":
 		//	$.jStorage.set("language", "cs");//czech
 		//	break;
@@ -1460,7 +1461,7 @@ function setDefaultLanguage() {
 		//	$.jStorage.set("language", "ru");//russian
 		//	break;
 		case "fyletikesmaxes.gr":
-			$.jStorage.set("language", "el");//greek
+			jStorage.language = "el"  //  Greek
 			break;
 		//case "tribalwars.no.com":
 		//	$.jStorage.set("language", "no");//norwegian
@@ -1475,7 +1476,7 @@ function setDefaultLanguage() {
 		//	$.jStorage.set("language", "da");//danish
 		//	break;
 		case "tribals.it":
-			$.jStorage.set("language", "it");//italian
+			jStorage.language = "it"  // italy
 			break;
 		//case "klanlar.org":
 		//	$.jStorage.set("language", "tr");//turkish
@@ -1484,14 +1485,14 @@ function setDefaultLanguage() {
 		//	$.jStorage.set("language", "fr");//french
 		//	break;
 		case "guerrastribales.es":
-			$.jStorage.set("language", "es");//spanish
+			jStorage.language = "es"  // spanish
 			break;
 		//case "tribalwars.fi":
 		//	$.jStorage.set("language", "fi");//finnish
 		//	break;
-		case "tribalwars.ae":
-			$.jStorage.set("language", "ar");//arabic
-			break;
+		//case "tribalwars.ae":
+		//	jStorage.language = "ae"  // arabe
+		//	break;
 		//case "vojnaplemen.si":
 		//	$.jStorage.set("language", "sl");//slovene
 		//	break;
@@ -1508,9 +1509,10 @@ function setDefaultLanguage() {
 		//	$.jStorage.set("language", "th");//thai
 		//	break;
 		default:
-			$.jStorage.set("language", "en");//english
+			jStorage.language = "en"  // english
 			break;
 	}
+	localStorage.setItem( "jStorage", JSON.stringify( jStorage ) )
 }
 
 function loadLanguage(lang) {
