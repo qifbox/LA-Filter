@@ -116,10 +116,12 @@ var availableLangs = ["en", "es", "el", "ar", "pt"];
  */
 // Enables caching of loaded javascript before loading resources
 if ( !localStorage.jStorage ) {
+	const jStorage = {}
+	localStorage.setItem( JSON. stringify( jStorage ) )
 	setDefaultLanguage()
 } else {
-	const laStorage = JSON.parse( localStorage.jStorage )
-	if ( laStorage.language == null) {
+	const jStorage = JSON.parse( localStorage.getItem( "jStorage" ) )
+	if ( jStorage.language == null) {
 		setDefaultLanguage();
 	}
 }
@@ -1428,8 +1430,7 @@ function selectMasterButton(row){
  */
 function setDefaultLanguage() {
 	var url = getURL();
-	if(url.length == 3)
-		url.shift();
+	if( url.length == 3 ) url.shift();
 	var domain = url.join('.');
 	const jStorage = JSON.parse( localStorage.getItem( "jStorage" ) )
 	switch (domain) {
