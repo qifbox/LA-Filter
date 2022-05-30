@@ -115,14 +115,17 @@ var availableLangs = ["en", "es", "el", "ar", "pt"];
  *	Init script
  */
 // Enables caching of loaded javascript before loading resources
-const laStorage = JSON.parse(localStorage.jStorage)
+if ( !localStorage.jStorage ) {
+	setDefaultLanguage()
+} else {
+	const laStorage = JSON.parse( localStorage.jStorage )
 	if ( laStorage.language == null) {
 		setDefaultLanguage();
 	}
-	$.getScript(scriptURL + "lang/" + $.jStorage.get("language") + '.js', function() {
-		checkPage();
-	});
-
+}
+$.getScript(scriptURL + "lang/" + $.jStorage.get("language") + '.js', function() {
+	checkPage();
+});
 
 function run(){
 	checkVersion();
