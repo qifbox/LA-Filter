@@ -103,21 +103,8 @@ var keyPressSettings = {
   "defaultButton": "Skip"
 };
 var availableLangs = ["en", "es", "el", "pt", "it"];
-window.top.$.getScript('https://raw.githubusercontent.com/UnrecognizedBR/LA-Filter/main/js/lib/jstorage.js', function() {
-  window.top.$.getScript('https://raw.githubusercontent.com/UnrecognizedBR/LA-Filter/main/js/lib/taffy.js', function() {
-    if (window.top.$.jStorage.get("language") == null) {
-      setDefaultLanguage();
-    }
-    window.top.$.getScript(`https://raw.githubusercontent.com/UnrecognizedBR/LA-Filter/main/lang/${window.top.$.jStorage.get("language")}.js`, function() {
-      console.log("init");
-      checkPage();
-    });
-  });
-  window.top.$.getScript('https://raw.githubusercontent.com/UnrecognizedBR/LA-Filter/main/js/notify.js');
-});
 
 function run() {
-  console.log("run");
   checkVersion();
   checkWorking();
   setVersion();
