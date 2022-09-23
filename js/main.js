@@ -1,6 +1,6 @@
 var version = "1.2 Fixed By Qif.";
 var scriptName = "LA Enhancer (1.2) - Fixed by Qif.";
-var scriptURL = "https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v7/";
+var scriptURL = "https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/";
 var updateNotesURL = "https://github.com/qifbox";
 var working = true;
 var resourcesLoaded = false;
@@ -102,17 +102,17 @@ var keyPressSettings = {
   "defaultButton": "Skip"
 };
 var availableLangs = ["en", "es", "el", "pt", "it"];
-window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v7/js/lib/jstorage.js', function() {
-  window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v7/js/lib/taffy.js', function() {
+window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/lib/jstorage.js', function() {
+  window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/lib/taffy.js', function() {
     if (window.top.$.jStorage.get("language") == null) {
       setDefaultLanguage();
     }
-    window.top.$.getScript(`https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v7/lang/${window.top.$.jStorage.get("language")}.js`, function() {
+    window.top.$.getScript(`https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/lang/${window.top.$.jStorage.get("language")}.js`, function() {
       console.log("init");
       checkPage();
     });
   });
-  window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v7/js/notify.js');
+  window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/notify.js');
 });
 
 function run(){
@@ -141,9 +141,9 @@ function checkVersion() {
         window.top.$.jStorage.deleteKey("profile:" + val);
       });
       window.top.$.jStorage.set("keyPressSettings", keyPressSettings);
-      Dialog.show("update_dialog", "This script has recently been updated to version <span style='font-weight:bold;'>" + version + "</span> and in order for the new version to work, all profiles and settings must be reset. Sorry for any inconvenience.<br /><br/><a href='" + updateNotesURL + "' target='_blank'>See what's new</a>.</br>I removed the difference between the original and the Alt version of the script. Both are now equally fast and even faster than either script was before. Should you  enounter any issues, please contact me on the forum! </br></br>Enjoy!</br>Qif.");
+      Dialog.show("update_dialog", "This script has recently been updated to version <span style='font-weight:bold;'>" + version + "</span> and in order for the new version to work, all profiles and settings must be reset. Sorry for any inconvenience.<br /><br/><a href='" + updateNotesURL + "' target='_blank'>See what's new</a></br></br>Enjoy!");
     } else{
-      Dialog.show("update_dialog", "This script has recently been updated to version <span style='font-weight:bold;'>" + version + "</span><br /><br/><a href='" + updateNotesURL + "' target='_blank'>See what's new</a>.</br>I removed the difference between the original and the Alt version of the script. Both are now equally fast and even faster than either script was before. Should you  enounter any issues, please contact me on the forum! </br></br>Enjoy!</br>Qif.");
+      Dialog.show("update_dialog", "This script has recently been updated to version <span style='font-weight:bold;'>" + version + "</span><br /><br/><a href='" + updateNotesURL + "' target='_blank'>See what's new</a></br></br>Enjoy!");
     }
 
   } else {
@@ -1238,10 +1238,10 @@ function editKey(e) {
     window.top.UI.ErrorMessage("You can only enter letters, numbers, or arrows. Plese try another key.", 1500);
   } else {
     var keyToChar = String.fromCharCode(e.keyCode);
-    if (e.keyCode == 37){keyToChar = "←";}
-    if (e.keyCode == 38){keyToChar = "↑";}
-    if (e.keyCode == 39){keyToChar = "→";}
-    if (e.keyCode == 40){keyToChar = "↓";}
+    if (e.keyCode == 37){keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã‚Â";}
+    if (e.keyCode == 38){keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬Ëœ";}
+    if (e.keyCode == 39){keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢";}
+    if (e.keyCode == 40){keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬Å“";}
 
     switch (keyToEdit) {
       case "A":
