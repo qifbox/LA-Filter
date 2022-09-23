@@ -1,6 +1,6 @@
 var version = "1.13.1 Fixed By Ibra";
 var scriptName = "LA Enhancer (1.13.1) - Fixed by Ibra Gonza II";
-var scriptURL = "https://github.com/UnrecognizedBR/LA-Filter/";
+var scriptURL = "https://github.com/qifbox/LA-Filter-PT-v2/";
 var updateNotesURL = "https://forum.tribalwars.net/index.php?threads/ntoombs19s-fa-filter.266604/page-15#post-7053294";
 var working = true;
 var resourcesLoaded = false;
@@ -102,6 +102,18 @@ var keyPressSettings = {
   "defaultButton": "Skip"
 };
 var availableLangs = ["en", "es", "el", "pt", "it"];
+window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v2/js/lib/jstorage.js', function() {
+  window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v2/js/lib/taffy.js', function() {
+    if (window.top.$.jStorage.get("language") == null) {
+      setDefaultLanguage();
+    }
+    window.top.$.getScript(`https://raw.githubusercontent.com/UnrecognizedBR/LA-Filter/main/lang/${window.top.$.jStorage.get("language")}.js`, function() {
+      console.log("init");
+      checkPage();
+    });
+  });
+  window.top.$.getScript('https://raw.githubusercontent.com/UnrecognizedBR/LA-Filter/main/js/notify.js');
+});
 
 function run(){
   checkVersion();
