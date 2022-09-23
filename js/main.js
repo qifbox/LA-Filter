@@ -22,7 +22,6 @@ if (window.top.game_data.player.sitter != "0") {
   sitter = "t=" + window.top.game_data.player.id + "&";
 }
 var link = ["https://" + window.location.host + "/game.php?" + sitter + "village=", "&screen=am_farm"];
-sendtoStats(1, "Enhancer");
 var userset;
 var s = {
   start_page: 0,
