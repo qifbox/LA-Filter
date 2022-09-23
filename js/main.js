@@ -117,7 +117,6 @@ $.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v9/js/lib/jstorage.
       checkPage();
     });
   });
-  $.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v9/js/notify.js');
 });
 
 function run(){
