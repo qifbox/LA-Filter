@@ -18,9 +18,9 @@ var keyToEdit;
 var current_units;
 var currentGameTime = getCurrentGameTime();
 var sitter = "";
-if (window.top.game_data.player.sitter != "0") {
-  sitter = "t=" + window.top.game_data.player.id + "&";
-}
+if (window.game_data.player.sitter != "0") {
+  sitter = "t=" + window.game_data.player.id + "&";
+};
 var link = ["https://" + window.location.host + "/game.php?" + sitter + "village=", "&screen=am_farm"];
 var userset;
 var s = {
@@ -102,17 +102,22 @@ var keyPressSettings = {
   "defaultButton": "Skip"
 };
 var availableLangs = ["en", "es", "el", "pt", "it"];
-window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/lib/jstorage.js', function() {
-  window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/lib/taffy.js', function() {
-    if (window.top.$.jStorage.get("language") == null) {
+
+/**********************************************************************
+ *	Init script
+ */
+// Enables caching of loaded javascript before loading resources
+$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/lib/jstorage.js', function() {
+  $.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/lib/taffy.js', function() {
+    if ($.jStorage.get("language") == null) {
       setDefaultLanguage();
     }
-    window.top.$.getScript(`https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/lang/${window.top.$.jStorage.get("language")}.js`, function() {
+    $.getScript(`https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/lang/${$.jStorage.get("language")}.js`, function() {
       console.log("init");
       checkPage();
     });
   });
-  window.top.$.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/notify.js');
+  $.getScript('https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v8/js/notify.js');
 });
 
 function run(){
@@ -136,11 +141,11 @@ function checkVersion() {
       confirm: true
     }];
     if(clearProfiles){
-      var profileList = window.top.$.jStorage.get("profileList");
-      window.top.$.each(profileList, function(i, val) {
-        window.top.$.jStorage.deleteKey("profile:" + val);
+      var profileList = $.jStorage.get("profileList");
+      $.each(profileList, function(i, val) {
+        $.jStorage.deleteKey("profile:" + val);
       });
-      window.top.$.jStorage.set("keyPressSettings", keyPressSettings);
+      $.jStorage.set("keyPressSettings", keyPressSettings);
       Dialog.show("update_dialog", "This script has recently been updated to version <span style='font-weight:bold;'>" + version + "</span> and in order for the new version to work, all profiles and settings must be reset. Sorry for any inconvenience.<br /><br/><a href='" + updateNotesURL + "' target='_blank'>See what's new</a></br></br>Enjoy!");
     } else{
       Dialog.show("update_dialog", "This script has recently been updated to version <span style='font-weight:bold;'>" + version + "</span><br /><br/><a href='" + updateNotesURL + "' target='_blank'>See what's new</a></br></br>Enjoy!");
@@ -152,12 +157,12 @@ function checkVersion() {
 }
 
 function checkWorking() {
-  var acknowledged = window.top.$.jStorage.get("working");
+  var acknowledged = $.jStorage.get("working");
   if (acknowledged == null) {
-    window.top.$.jStorage.set("working", false);
+    $.jStorage.set("working", false);
   }
   if (getVersion() != version) {
-    window.top.$.jStorage.set("working", false);
+    $.jStorage.set("working", false);
   }
   if (working == false && acknowledged == false) {
     buttons = [{
@@ -165,17 +170,17 @@ function checkWorking() {
       callback: null,
       confirm: true
     }];
-    window.top.UI.ConfirmationBox("An error has been discovered in this version. You may continue testing the script if you haven't noticed the error.", buttons, false, []);
-    window.top.$.jStorage.set("working", true);
+    UI.ConfirmationBox("An error has been discovered in this version. You may continue testing the script if you haven't noticed the error.", buttons, false, []);
+    $.jStorage.set("working", true);
   }
 }
 
 function setVersion() {
-  window.top.$.jStorage.set("version", version);
+  $.jStorage.set("version", version);
 }
 
 function getVersion() {
-  var ver = window.top.$.jStorage.get("version");
+  var ver = $.jStorage.get("version");
   if (ver == undefined) {
     setVersion();
     return version;
@@ -187,24 +192,24 @@ function getVersion() {
  *	 Auto page loading and settings creation
  */
 function showAllRows() {
-  var pages = window.top.$.trim(window.top.$('#plunder_list_nav tr:first td:last').children().last().html().replace(/\D+/g, ''));
-  if (window.top.$('#end_page').val() == "max") {
-    window.top.$('#end_page').text(pages);
+  var pages = $.trim($('#plunder_list_nav tr:first td:last').children().last().html().replace(/\D+/g, ''));
+  if ($('#end_page').val() == "max") {
+    $('#end_page').text(pages);
   }
-  window.top.$('#am_widget_Farm tr:last').remove();
-  if (pages > parseInt(window.top.$('#end_page').val(), 10)) {
-    pages = parseInt(window.top.$('#end_page').val(), 10);
+  $('#am_widget_Farm tr:last').remove();
+  if (pages > parseInt($('#end_page').val(), 10)) {
+    pages = parseInt($('#end_page').val(), 10);
   }
   setTimeout(function() {
-    getPage((parseInt(window.top.$('#start_page').val(), 10) - 1), pages);
+    getPage((parseInt($('#start_page').val(), 10) - 1), pages);
   }, 1);
 }
 
 function getPage(i, pages) {
   if (i < pages) {
     changeHeader(filter_41 + " " + (i + 1) + "/" + pages + " <img src='graphic/throbber.gif' height='24' width='24'></img>");
-    var url = link[0] + window.top.game_data.village.id + "&order=" + userset[s.order_by] + "&dir=" + userset[s.direction] + "&Farm_page=" + i + "&screen=am_farm";
-    window.top.$.ajax({
+    var url = link[0] + window.game_data.village.id + "&order=" + userset[s.order_by] + "&dir=" + userset[s.direction] + "&Farm_page=" + i + "&screen=am_farm";
+    $.ajax({
       type: 'GET',
       url: url,
       dataType: "html",
@@ -213,8 +218,8 @@ function getPage(i, pages) {
       },
       success: function(data) {
         console.log($(data));
-        window.top.$('#plunder_list tr', data).slice(2).each(function() {
-          window.top.$('#plunder_list tr:last').after("<tr>" + window.top.$(this).html() + "</tr>");
+        $('#plunder_list tr', data).slice(1).each(function() {
+          $('#plunder_list tr:last').after("<tr>" + $(this).html() + "</tr>");
         });
         setTimeout(function() {
           getPage(i + 1, pages);
@@ -228,62 +233,62 @@ function getPage(i, pages) {
       changeHeader(filter_40);
       highlightRows();
     }, 1);
-    window.top.$('#plunder_list').show();
-    window.top.Accountmanager.initTooltips();
+    $('#plunder_list').show();
+    Accountmanager.initTooltips();
     pagesLoaded = true;
     cansend = true;
   }
 }
 
 function changeHeader(string) {
-  window.top.$("h3:first").html(string);
+  $("h3:first").html(string);
 }
 
 function highlightRows() {
-  window.top.$('#am_widget_Farm table').each(function() {
-    window.top.$('tr:even:gt(0) td', this).not("table:first").css("backgroundColor", "#FFF5DA");
-    window.top.$('tr:odd:gt(0) td', this).not("table:first").css("backgroundColor", "#F0E2BE");
+  $('#am_widget_Farm table').each(function() {
+    $('tr:even:gt(0) td', this).not("table:first").css("backgroundColor", "#FFF5DA");
+    $('tr:odd:gt(0) td', this).not("table:first").css("backgroundColor", "#F0E2BE");
   });
 }
 
 function getNewVillage(way) {
   if (way == "n")
-    window.top.UI.InfoMessage('Switching to next village...', 500);
+    UI.InfoMessage('Switching to next village...', 500);
   else
-    window.top.UI.InfoMessage('Switching to previous village...', 500);
+    UI.InfoMessage('Switching to previous village...', 500);
   window.onkeydown = function(){};
   cansend = false;
   filtersApplied = false;
   Timing.pause();
   fadeThanksToCheese();
   openLoader();
-  var vlink = link[0] + way + window.top.game_data.village.id + link[1];
-  window.top.$.ajax({
+  var vlink = link[0] + way + window.game_data.village.id + link[1];
+  $.ajax({
     type: "GET",
     url: vlink,
     dataType: "html",
     error: function(xhr, statusText) {
       alert("Error: " + statusText);
-      window.top.$('#fader').remove();
-      window.top.$('#loaders').remove();
+      $('#fader').remove();
+      $('#loaders').remove();
     },
     success: function(data) {
-      var v = window.top.$(data);
+      var v = $(data);
       var titlePat = /<\s*title\s*>([^<]+)<\/title\s*>/g;
       var titleMatch = titlePat.exec(data);
       var title = titleMatch[1];
-      var newGameData = window.top.$.parseJSON(data.split("TribalWars.updateGameData(")[1].split(");")[0]);
-      window.top.game_data = newGameData;
+      var newGameData = $.parseJSON(data.split("TribalWars.updateGameData(")[1].split(");")[0]);
+      window.game_data = newGameData;
       if (typeof history !== 'undefined' && typeof history.pushState === 'function') {
-        history.pushState({}, window.top.game_data.village.name + " - Loot Assistant", "https://" + window.top.location.host + game_data.link_base_pure + 'am_farm');
+        history.pushState({}, window.game_data.village.name + " - Loot Assistant", "https://" + window.location.host + game_data.link_base_pure + 'am_farm');
       }
-      window.top.$('#header_info').html(window.top.$('#header_info', v).html());
-      window.top.$('#topContainer').html(window.top.$('#topContainer', v).html());
-      window.top.$('#contentContainer').html(window.top.$('#contentContainer', v).html());
-      window.top.$('#quickbar_inner').html(window.top.$('#quickbar_inner', v).html());
-      window.top.$('head').find('title').html(title);
-      window.top.$('#fader').remove();
-      window.top.$('#loaders').remove();
+      $('#header_info').html($('#header_info', v).html());
+      $('#topContainer').html($('#topContainer', v).html());
+      $('#contentContainer').html($('#contentContainer', v).html());
+      $('#quickbar_inner').html($('#quickbar_inner', v).html());
+      $('head').find('title').html(title);
+      $('#fader').remove();
+      $('#loaders').remove();
       Timing.resetTickHandlers();
       Timing.pause();
       pagesLoaded = false;
@@ -294,32 +299,37 @@ function getNewVillage(way) {
 }
 
 function showSettings() {
-  window.top.$('head').append("<link type='text/css' rel='stylesheet' href='" + scriptURL + "css/style.css' />");
-  window.top.$("#contentContainer h3").eq(0).after(window.top.$("<div class='vis'id='settingsDiv'><table class='settingsTable'><thead><tr><th colspan='5'class='vis'style='padding:0px;'><h4> " + scriptName + " - <a href='http://forum.tribalwars.net/showthread.php?266604-ntoombs19-s-FA-Filter'target='_blank'>" + filter_02 + "</a> - " + filter_42 + ": <select id='language'style='margin:0px;'onchange='loadLanguage(window.top.$(&quot;#language&quot;).val())'></select><span style='font-size:10px;float:right;font-weight:normal;font-style:normal'>" + filter_03 + " <a href='http://forum.tribalwars.net/member.php?22739-ntoombs19'target='_blank'>ntoombs19</a>&nbsp;<div class='vis'style='float:right;text-align:center;line-height:100%;width:12px;height:12px;margin:0px 0px 0px 0px;position:relative;background-color:tan;opacity:.7'><a href='#'num='2'onclick='uglyHider(window.top.$(this));return false;'>-</a></div></span></h4></th></tr></thead><tbody id='settingsBody'><tr><td class='col1'style='min-width:200px'><span>" + filter_04 + "</span>&nbsp;<input type='text'value=''size='2'maxlength='3'id='start_page'>&nbsp;<span>" + filter_05 + "</span>&nbsp;<input type='text'value=''size='2'maxlength='3'id='end_page'></td><td colspan='3'><span style='font-weight:bold'>" + filter_06 + "</span>&nbsp;<img src='graphic/questionmark.png'width='13'height='13'id='enable_help'></td><td rowspan='5'valign='top'><form><input type='checkbox'id='all_none'>&nbsp;<label for='all_none'style='font-weight:bold'>" + filter_07 + "</label>&nbsp;<img src='graphic/questionmark.png'width='13'height='13'id='report_help'><br><input type='checkbox'id='blue'><label for='blue'><img src='graphic/dots/blue.png'>&nbsp;" + filter_08 + "</label><br><input type='checkbox'id='green'><label for='green'><img src='graphic/dots/green.png'>&nbsp;" + filter_09 + "</label><br><input type='checkbox'id='yellow'><label for='yellow'><img src='graphic/dots/yellow.png'>&nbsp;" + filter_10 + "</label><br><input type='checkbox'id='red_yellow'><label for='red_yellow'><img src='graphic/dots/red_yellow.png'>&nbsp;" + filter_11 + "</label><br><input type='checkbox'id='red_blue'><label for='red_blue'><img src='graphic/dots/red_blue.png'>&nbsp;" + filter_12 + "</label><br><input type='checkbox'id='red'><label for='red'><img src='graphic/dots/red.png'>&nbsp;" + filter_13 + "</label></form></td></tr><tr><td rowspan='2'><label for='order_by'>" + filter_14 + ":</label>&nbsp;<select id='order_by'val='distance'><option value='distance'>" + filter_15 + "</option><option value='date'>" + filter_16 + "</option></select><br><label for='direction'>" + filter_17 + ":</label>&nbsp;<select id='direction'val='desc'><option value='asc'>" + filter_18 + "</option><option value='desc'>" + filter_19 + "</option></select></td><td style='width:26px'><input type='checkbox'id='enable_hauls'></td><td style='width:110px'><label for='enable_hauls'>" + filter_20 + "</label></td><td><input type='radio'name='hauls'id='full'><label for='full'><img src='graphic/max_loot/1.png'>" + filter_21 + "</label>&nbsp;<input type='radio'name='hauls'id='partial'><label for='partial'><img src='graphic/max_loot/0.png'>" + filter_22 + "</label></td></tr><tr><td><input type='checkbox'id='enable_attacks'></td><td><label for='enable_attacks'>" + filter_23 + "</label></td><td><select id='attack_operator'><option value='greater_than'>" + filter_24 + "</option><option value='less_than'>" + filter_25 + "</option><option value='equal_to'>" + filter_26 + "</option></select>&nbsp;<input type='text'id='attack_value'size='2'maxlength='2'value=''></td></tr><tr><td rowspan='1'><span style='font-weight:bold;'>" + filter_43 + "</span></td><td><input type='checkbox'id='enable_walls'></td><td><label for='enable_walls'>" + filter_30 + "</label></td><td><select id='wall_operator'><option value='greater_than'>" + filter_24 + "</option><option value='less_than'>" + filter_25 + "</option><option value='equal_to'>" + filter_26 + "</option></select>&nbsp;<input type='text'id='wall_value'size='2'maxlength='2'value=''></td></tr><tr><td><input type='checkbox'id='next_village_no_farms'><label for='next_village_no_farms'>" + filter_39 + "</label></td><td><input type='checkbox'id='enable_distances'></td><td><label for='enable_distances'>" + filter_31 + "</label></td><td><select id='distance_operator'val='greater_than'><option value='greater_than'>" + filter_24 + "</option><option value='less_than'>" + filter_25 + "</option><option value='equal_to'>" + filter_26 + "</option></select>&nbsp;<input type='text'id='distance_value'size='2'maxlength='2'value=''></td></tr><tr><td><input type='checkbox' id='next_village_units' />" + filter_44 + "</td><td><input type='checkbox' id='enable_continents' /><td colspan='3'><select id='continent_display'><option value='hide'>" + filter_32 + "</option><option value='show'>" + filter_33 + "</option></select>&nbsp;<label for='continents_list'>" + filter_34 + "</label>&nbsp;<input type='text'size='2'maxlength='150'id='continents_list'value=''>&nbsp;<img src='graphic/questionmark.png'height='13'id='continent_help'></td></tr><tr><td><input type='checkbox' id='next_village_scouts' /><input type='text' size='2' id='scouts_left' /> " + filter_45 + "</td><td><input type='checkbox'id='enable_scout'></td><td colspan='3'><label for='enable_scout'>" + filter_35 + "</label>&nbsp;<select id='scout_report_operator'val='greater_than'><option value='greater_than'>" + filter_24 + "</option><option value='less_than'>" + filter_25 + "</option><option value='equal_to'>" + filter_26 + "</option></select>&nbsp;<input type='text'id='haul_value'size='9'maxlength='7'value=''></td></tr><tr><td><input type='checkbox' id='next_village_farming_troops' /><input type='text' size='2' id='farming_troops_left' /> " + filter_46 + "</td><td><input type='checkbox'id='enable_time'></td><td colspan='3'><select id='attack_time_filter'val='hide'><option value='hide'>" + filter_32 + "</option><option value='show'>" + filter_33 + "</option></select>&nbsp;<label for='enable_time'>" + filter_36 + "</label>&nbsp;<input type='text'id='time_value'size='2'maxlength='4'value=''><span>" + filter_37 + "</span></td></tr><tr><td><input type='checkbox'id='enable_auto_run'><label for='enable_autoRun'>" + filter_38 + "</label></td><td><input type='checkbox' id='hide_recent_farms' /></td><td colspan='3'><select id='sent_time_filter'val='hide'><option value='hide'>" + filter_32 + "</option><option value='show'>" + filter_33 + "</option></select>&nbsp;" + filter_47 + " <input type='text' size='2' id='hide_recent_time' /> " + filter_48 + "</td></tr><tr><th>" + filter_49 + "</th><th colspan='4'>" + filter_50 + "</th></tr><tr><td rowspan='4'><table><tr class='hotkey_values'><td><a href='#'onclick='return setKeyEditMode(\"A\")'id='button_a'class='farm_icon farm_icon_a'></a></td><td><a href='#'onclick='return setKeyEditMode(\"B\")'id='button_b'class='farm_icon farm_icon_b'></a></td><td><a href='#'onclick='return setKeyEditMode(\"C\")'id='button_c'class='farm_icon farm_icon_c'></a></td><td><a href='#'onclick='return setKeyEditMode(\"Master\")'id='button_master'class='farm_icon farm_icon_m'></a></td></tr><tr class='hotkey_values'><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_a'value='A'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_b'value='B'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_c'value='C'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_master'value='M'></td></tr><tr class='hotkey_values'><td colspan='2'><input class='btn tooltip'onclick='return setKeyEditMode(\"Skip\")'type='button'value='Skip'style='margin:0px 0px 0px 0px'title='" + filter_51 + "'></td><td><input class='btn tooltip'onclick='return setKeyEditMode(\"Left\")'type='button'value='ÃƒÂ¢Ã¢â‚¬Â¡Ã…Â¡'style='margin:0px 0px 0px 0px'title='" + filter_52 + "'></td><td><input class='btn tooltip'type='button'onclick='return setKeyEditMode(\"Right\")'value='ÃƒÂ¢Ã¢â‚¬Â¡Ã¢â‚¬Âº'style='margin:0px 0px 0px 0px'title='" + filter_53 + "'></td></tr><tr class='hotkey_values'><td colspan='2'><input type='text'class='hotkey_value' READONLY id='hotkey_value_skip'value='S'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_left'value='&#8592;'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_right'value='&#8594;'></td></tr></table></td><td><input type='checkbox' onchange='return updateKeypressSettings();' id='priorityOneEnabled'/></td><td colspan='3'>" + filter_54 + " <select id='priorityOneProfile' onchange='return updateKeypressSettings();'></select> " + filter_55 + " <select id='priorityOneButton' onchange='return updateKeypressSettings();'><option val='" + filter_56 + "'>" + filter_56 + "</option><option val='" + filter_57 + "'>" + filter_57 + "</option><option val='" + filter_58 + "'>" + filter_58 + "</option><option val='" + filter_59 + "'>" + filter_59 + "</option></select></td></tr><tr><td><input type='checkbox' onchange='return updateKeypressSettings();' id='priorityTwoEnabled'/></td><td colspan='3'>" + filter_54 + " <select id='priorityTwoProfile' onchange='return updateKeypressSettings();'></select> " + filter_55 + " <select id='priorityTwoButton' onchange='return updateKeypressSettings();'><option val='" + filter_56 + "'>" + filter_56 + "</option><option val='" + filter_57 + "'>" + filter_57 + "</option><option val='" + filter_58 + "'>" + filter_58 + "</option><option val='" + filter_59 + "'>" + filter_59 + "</option></select></td></tr><tr><td><input type='checkbox' onchange='return updateKeypressSettings();' id='priorityThreeEnabled'/></td><td colspan='3'>" + filter_54 + " <select id='priorityThreeProfile' onchange='return updateKeypressSettings();'></select> " + filter_55 + " <select id='priorityThreeButton' onchange='return updateKeypressSettings();'><option val='" + filter_56 + "'>" + filter_56 + "</option><option val='" + filter_57 + "'>" + filter_57 + "</option><option val='" + filter_58 + "'>" + filter_58 + "</option><option val='" + filter_59 + "'>" + filter_59 + "</option></select></td></tr><tr><td colspan='4'>" + filter_60 + " <select id='defaultButton' onchange='return updateKeypressSettings();'><option val='" + filter_56 + "'>" + filter_56 + "</option><option val='" + filter_57 + "'>" + filter_57 + "</option><option val='" + filter_58 + "'>" + filter_58 + "</option><option val='" + filter_59 + "'>" + filter_59 + "</option></select></td></tr><tr><td colspan='5'><div style='float:left'><input type='submit'value='" + profile_02 + "'onclick='applySettings()'>&nbsp;<input type='submit'value='" + profile_03 + "'onclick='resetTable()'></div><div style='float:right'><img src='graphic/questionmark.png'width='13'height='13'id='profile_help'>&nbsp;<label for='settingsProfile'>" + profile_01 + ":</label>&nbsp;<select id='settingsProfile'onchange='changeProfile(window.top.$(&quot;#settingsProfile&quot;).val())'></select>&nbsp;<input type='submit'value='" + profile_04 + "'onclick='createProfile()'>&nbsp;<input type='submit'value='" + profile_05 + "'onclick='setDefaultProfile()'>&nbsp;<input type='submit'value='" + profile_06 + "'onclick='deleteProfile()'>&nbsp;<input type='submit'value='" + profile_07 + "'onclick='updateProfile()'>&nbsp;<input type='submit'value='" + profile_08 + "'onclick='exportProfile()'>&nbsp;<input type='submit'value='" + profile_09 + "'onclick='importProfile()'></div></td></tr></tbody></table></div>"));
+  $('head').append("<link type='text/css' rel='stylesheet' href='" + scriptURL + "css/style.css' />");
+  $("#contentContainer h3").eq(0).after($("<div class='vis'id='settingsDiv'><table class='settingsTable'><thead><tr><th colspan='5'class='vis'style='padding:0px;'><h4> " + scriptName + " - <a href='http://forum.tribalwars.net/showthread.php?266604-ntoombs19-s-FA-Filter'target='_blank'>" + filter_02 + "</a> - " + filter_42 + ": <select id='language'style='margin:0px;'onchange='loadLanguage($(&quot;#language&quot;).val())'></select><span style='font-size:10px;float:right;font-weight:normal;font-style:normal'>" + filter_03 + " <a href='http://forum.tribalwars.net/member.php?22739-ntoombs19'target='_blank'>ntoombs19</a>&nbsp;<div class='vis'style='float:right;text-align:center;line-height:100%;width:12px;height:12px;margin:0px 0px 0px 0px;position:relative;background-color:tan;opacity:.7'><a href='#'num='2'onclick='uglyHider($(this));return false;'>-</a></div></span></h4></th></tr></thead><tbody id='settingsBody'><tr><td class='col1'style='min-width:200px'><span>" + filter_04 + "</span>&nbsp;<input type='text'value=''size='2'maxlength='3'id='start_page'>&nbsp;<span>" + filter_05 + "</span>&nbsp;<input type='text'value=''size='2'maxlength='3'id='end_page'></td><td colspan='3'><span style='font-weight:bold'>" + filter_06 + "</span>&nbsp;<img src='graphic/questionmark.png'width='13'height='13'id='enable_help'></td><td rowspan='5'valign='top'><form><input type='checkbox'id='all_none'>&nbsp;<label for='all_none'style='font-weight:bold'>" + filter_07 + "</label>&nbsp;<img src='graphic/questionmark.png'width='13'height='13'id='report_help'><br><input type='checkbox'id='blue'><label for='blue'><img src='graphic/dots/blue.png'>&nbsp;" + filter_08 + "</label><br><input type='checkbox'id='green'><label for='green'><img src='graphic/dots/green.png'>&nbsp;" + filter_09 + "</label><br><input type='checkbox'id='yellow'><label for='yellow'><img src='graphic/dots/yellow.png'>&nbsp;" + filter_10 + "</label><br><input type='checkbox'id='red_yellow'><label for='red_yellow'><img src='graphic/dots/red_yellow.png'>&nbsp;" + filter_11 + "</label><br><input type='checkbox'id='red_blue'><label for='red_blue'><img src='graphic/dots/red_blue.png'>&nbsp;" + filter_12 + "</label><br><input type='checkbox'id='red'><label for='red'><img src='graphic/dots/red.png'>&nbsp;" + filter_13 + "</label></form></td></tr><tr><td rowspan='2'><label for='order_by'>" + filter_14 + ":</label>&nbsp;<select id='order_by'val='distance'><option value='distance'>" + filter_15 + "</option><option value='date'>" + filter_16 + "</option></select><br><label for='direction'>" + filter_17 + ":</label>&nbsp;<select id='direction'val='desc'><option value='asc'>" + filter_18 + "</option><option value='desc'>" + filter_19 + "</option></select></td><td style='width:26px'><input type='checkbox'id='enable_hauls'></td><td style='width:110px'><label for='enable_hauls'>" + filter_20 + "</label></td><td><input type='radio'name='hauls'id='full'><label for='full'><img src='graphic/max_loot/1.png'>" + filter_21 + "</label>&nbsp;<input type='radio'name='hauls'id='partial'><label for='partial'><img src='graphic/max_loot/0.png'>" + filter_22 + "</label></td></tr><tr><td><input type='checkbox'id='enable_attacks'></td><td><label for='enable_attacks'>" + filter_23 + "</label></td><td><select id='attack_operator'><option value='greater_than'>" + filter_24 + "</option><option value='less_than'>" + filter_25 + "</option><option value='equal_to'>" + filter_26 + "</option></select>&nbsp;<input type='text'id='attack_value'size='2'maxlength='2'value=''></td></tr><tr><td rowspan='1'><span style='font-weight:bold;'>" + filter_43 + "</span></td><td><input type='checkbox'id='enable_walls'></td><td><label for='enable_walls'>" + filter_30 + "</label></td><td><select id='wall_operator'><option value='greater_than'>" + filter_24 + "</option><option value='less_than'>" + filter_25 + "</option><option value='equal_to'>" + filter_26 + "</option></select>&nbsp;<input type='text'id='wall_value'size='2'maxlength='2'value=''></td></tr><tr><td><input type='checkbox'id='next_village_no_farms'><label for='next_village_no_farms'>" + filter_39 + "</label></td><td><input type='checkbox'id='enable_distances'></td><td><label for='enable_distances'>" + filter_31 + "</label></td><td><select id='distance_operator'val='greater_than'><option value='greater_than'>" + filter_24 + "</option><option value='less_than'>" + filter_25 + "</option><option value='equal_to'>" + filter_26 + "</option></select>&nbsp;<input type='text'id='distance_value'size='2'maxlength='2'value=''></td></tr><tr><td><input type='checkbox' id='next_village_units' />" + filter_44 + "</td><td><input type='checkbox' id='enable_continents' /><td colspan='3'><select id='continent_display'><option value='hide'>" + filter_32 + "</option><option value='show'>" + filter_33 + "</option></select>&nbsp;<label for='continents_list'>" + filter_34 + "</label>&nbsp;<input type='text'size='2'maxlength='150'id='continents_list'value=''>&nbsp;<img src='graphic/questionmark.png'height='13'id='continent_help'></td></tr><tr><td><input type='checkbox' id='next_village_scouts' /><input type='text' size='2' id='scouts_left' /> " + filter_45 + "</td><td><input type='checkbox'id='enable_scout'></td><td colspan='3'><label for='enable_scout'>" + filter_35 + "</label>&nbsp;<select id='scout_report_operator'val='greater_than'><option value='greater_than'>" + filter_24 + "</option><option value='less_than'>" + filter_25 + "</option><option value='equal_to'>" + filter_26 + "</option></select>&nbsp;<input type='text'id='haul_value'size='9'maxlength='7'value=''></td></tr><tr><td><input type='checkbox' id='next_village_farming_troops' /><input type='text' size='2' id='farming_troops_left' /> " + filter_46 + "</td><td><input type='checkbox'id='enable_time'></td><td colspan='3'><select id='attack_time_filter'val='hide'><option value='hide'>" + filter_32 + "</option><option value='show'>" + filter_33 + "</option></select>&nbsp;<label for='enable_time'>" + filter_36 + "</label>&nbsp;<input type='text'id='time_value'size='2'maxlength='4'value=''><span>" + filter_37 + "</span></td></tr><tr><td><input type='checkbox'id='enable_auto_run'><label for='enable_autoRun'>" + filter_38 + "</label></td><td><input type='checkbox' id='hide_recent_farms' /></td><td colspan='3'><select id='sent_time_filter'val='hide'><option value='hide'>" + filter_32 + "</option><option value='show'>" + filter_33 + "</option></select>&nbsp;" + filter_47 + " <input type='text' size='2' id='hide_recent_time' /> " + filter_48 + "</td></tr><tr><th>" + filter_49 + "</th><th colspan='4'>" + filter_50 + "</th></tr><tr><td rowspan='4'><table><tr class='hotkey_values'><td><a href='#'onclick='return setKeyEditMode(\"A\")'id='button_a'class='farm_icon farm_icon_a'></a></td><td><a href='#'onclick='return setKeyEditMode(\"B\")'id='button_b'class='farm_icon farm_icon_b'></a></td><td><a href='#'onclick='return setKeyEditMode(\"C\")'id='button_c'class='farm_icon farm_icon_c'></a></td><td><a href='#'onclick='return setKeyEditMode(\"Master\")'id='button_master'class='farm_icon farm_icon_m'></a></td></tr><tr class='hotkey_values'><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_a'value='A'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_b'value='B'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_c'value='C'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_master'value='M'></td></tr><tr class='hotkey_values'><td colspan='2'><input class='btn tooltip'onclick='return setKeyEditMode(\"Skip\")'type='button'value='Skip'style='margin:0px 0px 0px 0px'title='" + filter_51 + "'></td><td><input class='btn tooltip'onclick='return setKeyEditMode(\"Left\")'type='button'value='ÃƒÂ¢Ã¢â‚¬Â¡Ã…Â¡'style='margin:0px 0px 0px 0px'title='" + filter_52 + "'></td><td><input class='btn tooltip'type='button'onclick='return setKeyEditMode(\"Right\")'value='ÃƒÂ¢Ã¢â‚¬Â¡Ã¢â‚¬Âº'style='margin:0px 0px 0px 0px'title='" + filter_53 + "'></td></tr><tr class='hotkey_values'><td colspan='2'><input type='text'class='hotkey_value' READONLY id='hotkey_value_skip'value='S'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_left'value='&#8592;'></td><td><input type='text'class='hotkey_value' READONLY id='hotkey_value_right'value='&#8594;'></td></tr></table></td><td><input type='checkbox' onchange='return updateKeypressSettings();' id='priorityOneEnabled'/></td><td colspan='3'>" + filter_54 + " <select id='priorityOneProfile' onchange='return updateKeypressSettings();'></select> " + filter_55 + " <select id='priorityOneButton' onchange='return updateKeypressSettings();'><option val='" + filter_56 + "'>" + filter_56 + "</option><option val='" + filter_57 + "'>" + filter_57 + "</option><option val='" + filter_58 + "'>" + filter_58 + "</option><option val='" + filter_59 + "'>" + filter_59 + "</option></select></td></tr><tr><td><input type='checkbox' onchange='return updateKeypressSettings();' id='priorityTwoEnabled'/></td><td colspan='3'>" + filter_54 + " <select id='priorityTwoProfile' onchange='return updateKeypressSettings();'></select> " + filter_55 + " <select id='priorityTwoButton' onchange='return updateKeypressSettings();'><option val='" + filter_56 + "'>" + filter_56 + "</option><option val='" + filter_57 + "'>" + filter_57 + "</option><option val='" + filter_58 + "'>" + filter_58 + "</option><option val='" + filter_59 + "'>" + filter_59 + "</option></select></td></tr><tr><td><input type='checkbox' onchange='return updateKeypressSettings();' id='priorityThreeEnabled'/></td><td colspan='3'>" + filter_54 + " <select id='priorityThreeProfile' onchange='return updateKeypressSettings();'></select> " + filter_55 + " <select id='priorityThreeButton' onchange='return updateKeypressSettings();'><option val='" + filter_56 + "'>" + filter_56 + "</option><option val='" + filter_57 + "'>" + filter_57 + "</option><option val='" + filter_58 + "'>" + filter_58 + "</option><option val='" + filter_59 + "'>" + filter_59 + "</option></select></td></tr><tr><td colspan='4'>" + filter_60 + " <select id='defaultButton' onchange='return updateKeypressSettings();'><option val='" + filter_56 + "'>" + filter_56 + "</option><option val='" + filter_57 + "'>" + filter_57 + "</option><option val='" + filter_58 + "'>" + filter_58 + "</option><option val='" + filter_59 + "'>" + filter_59 + "</option></select></td></tr><tr><td colspan='5'><div style='float:left'><input type='submit'value='" + profile_02 + "'onclick='applySettings()'>&nbsp;<input type='submit'value='" + profile_03 + "'onclick='resetTable()'></div><div style='float:right'><img src='graphic/questionmark.png'width='13'height='13'id='profile_help'>&nbsp;<label for='settingsProfile'>" + profile_01 + ":</label>&nbsp;<select id='settingsProfile'onchange='changeProfile($(&quot;#settingsProfile&quot;).val())'></select>&nbsp;<input type='submit'value='" + profile_04 + "'onclick='createProfile()'>&nbsp;<input type='submit'value='" + profile_05 + "'onclick='setDefaultProfile()'>&nbsp;<input type='submit'value='" + profile_06 + "'onclick='deleteProfile()'>&nbsp;<input type='submit'value='" + profile_07 + "'onclick='updateProfile()'>&nbsp;<input type='submit'value='" + profile_08 + "'onclick='exportProfile()'>&nbsp;<input type='submit'value='" + profile_09 + "'onclick='importProfile()'></div></td></tr></tbody></table></div>"));
   formatSettings();
   addLanguages();
-  window.top.$("#language option[value='" + window.top.$.jStorage.get("language") + "']").attr("selected", "selected");
+  $("#language option[value='" + $.jStorage.get("language") + "']").attr("selected", "selected");
 }
 
 function formatSettings() {
-  window.top.$("#all_none").bind("click", function() {
-    window.top.$(this).closest('form').find(':checkbox').prop('checked', this.checked);
+  $("#all_none").bind("click", function() {
+    $(this).closest('form').find(':checkbox').prop('checked', this.checked);
   });
-  var reportHelp = window.top.$('#report_help');
+	// report instructions
+  var reportHelp = $('#report_help');
   reportHelp.attr('title', instructions_01);
-  window.top.UI.ToolTip(reportHelp);
-  var enableHelp = window.top.$('#enable_help');
+  UI.ToolTip(reportHelp);
+	// enable instrunctions
+  var enableHelp = $('#enable_help');
   enableHelp.attr('title', instructions_02);
-  window.top.UI.ToolTip(enableHelp);
-  var continentHelp = window.top.$('#continent_help');
+  UI.ToolTip(enableHelp);
+	// continent instrunctions
+  var continentHelp = $('#continent_help');
   continentHelp.attr('title', instructions_03);
-  window.top.UI.ToolTip(continentHelp);
-  var recentHelp = window.top.$('#recent_help');
+  UI.ToolTip(continentHelp);
+	// recent instrunctions
+  var recentHelp = $('#recent_help');
   recentHelp.attr('title', instructions_04);
-  window.top.UI.ToolTip(recentHelp);
-  var profileHelp = window.top.$('#profile_help');
+  UI.ToolTip(recentHelp);
+	// profile instrunctions
+  var profileHelp = $('#profile_help');
   profileHelp.attr('title', instructions_05);
-  window.top.UI.ToolTip(profileHelp);
+  UI.ToolTip(profileHelp);
   loadDefaultProfile();
   fillProfileList();
   fillMasterSettings();
@@ -327,8 +337,8 @@ function formatSettings() {
 }
 
 function removeFirstPage() {
-  window.top.$('#plunder_list tr:gt(0)').remove();
-  window.top.$('#plunder_list_nav').hide();
+  $('#plunder_list tr:gt(0)').remove();
+  $('#plunder_list_nav').hide();
 }
 
 /**********************************************************************
@@ -337,35 +347,35 @@ function removeFirstPage() {
 function customSendUnits(link, target_village, template_id, button) {
   if (!checkIfNextVillage()){
     button.closest("tr").hide();
-    link = window.top.$(link);
+    link = $(link);
     if (link.hasClass('farm_icon_disabled')) return false;
-    
+
     var data = {
       target: target_village,
       template_id: template_id,
-      source: window.top.game_data.village.id
+      source: game_data.village.id
     };
-    window.top.$.post(window.top.Accountmanager.send_units_link, data, function(data) {
+    $.post(Accountmanager.send_units_link, data, function(data) {
       if (data.error) {
         if (userset[s.next_village_units] && data.error === "Not enough units available") {
           if (cansend && filtersApplied)
             getNewVillage("n");
           return false;
         } else {
-          window.top.UI.ErrorMessage(data.error);
+          UI.ErrorMessage(data.error);
           button.closest("tr").show();
         }
       } else {
         setLocalStorageRow(target_village);
-        if (typeof window.top.$(button).prop('tooltipText') != 'undefined') {
-          var buttext = window.top.$(button).prop('tooltipText');
+        if (typeof $(button).prop('tooltipText') != 'undefined') {
+          var buttext = $(button).prop('tooltipText');
         }
-        var yolo = window.top.$('<div></div>').append(window.top.$(buttext));
-        var bolo = window.top.$(yolo).find('img[src*="res.png"]').eq(0).attr('src');
+        var yolo = $('<div></div>').append($(buttext));
+        var bolo = $(yolo).find('img[src*="res.png"]').eq(0).attr('src');
         var sep1 = buttext.split(/<br\s*?\/?>/ig);
         sep1.splice(sep1.length - 2, 1);
-        window.top.UI.SuccessMessage(sep1.join(" "), 100);
-        window.top.Accountmanager.farm.updateOwnUnitsAvailable(data.current_units);
+        UI.SuccessMessage(sep1.join(" "), 100);
+        Accountmanager.farm.updateOwnUnitsAvailable(data.current_units);
       }
     }, 'json');
     return false
@@ -375,33 +385,33 @@ function customSendUnits(link, target_village, template_id, button) {
 function customSendUnitsFromReport(link, target_village, report_id, button) {
   if (!checkIfNextVillage()) {
     button.closest("tr").hide();
-    link = window.top.$(link);
+    link = $(link);
     if (link.hasClass('farm_icon_disabled')) return false;
     var data = {
       report_id: report_id
     };
-    window.top.$.post(window.top.Accountmanager.send_units_link_from_report, data, function(data) {
+    $.post(Accountmanager.send_units_link_from_report, data, function(data) {
       if (data.error) {
         if (userset[s.next_village_units] && data.error === "Not enough units available") {
           if (cansend && filtersApplied)
             getNewVillage("n");
           return false;
         } else {
-          window.top.UI.ErrorMessage(data.error);
+          UI.ErrorMessage(data.error);
           button.closest("tr").show();
         }
       } else {
         setLocalStorageRow(target_village);
         if (typeof data.success === 'string') {
-          if (typeof window.top.$(button).prop('tooltipText') != 'undefined') {
-            var buttext = window.top.$(button).prop('tooltipText');
+          if (typeof $(button).prop('tooltipText') != 'undefined') {
+            var buttext = $(button).prop('tooltipText');
           }
-          var yolo = window.top.$('<div></div>').append(window.top.$(buttext));
-          var bolo = window.top.$(yolo).find('img[src*="res.png"]').eq(0).attr('src');
+          var yolo = $('<div></div>').append($(buttext));
+          var bolo = $(yolo).find('img[src*="res.png"]').eq(0).attr('src');
           var sep1 = buttext.split(/<br\s*?\/?>/ig);
           sep1.splice(sep1.length - 2, 1);
-          window.top.UI.SuccessMessage(sep1.join(" "), 100);
-          window.top.Accountmanager.farm.updateOwnUnitsAvailable(data.current_units);
+          UI.SuccessMessage(sep1.join(" "), 100);
+          Accountmanager.farm.updateOwnUnitsAvailable(data.current_units);
         };
       }
     }, 'json');
@@ -415,38 +425,38 @@ function setOnclick(button) {
     var parameters = clickFunction.slice(clickFunction.indexOf("(") + 1, clickFunction.indexOf(")"));
     var eachParameter = parameters.split(",");
     if (clickFunction.indexOf("FromReport") == -1) {
-      button.find('a').attr('onclick', 'return customSendUnits(' + parameters + ', window.top.$(this))');
+      button.find('a').attr('onclick', 'return customSendUnits(' + parameters + ', $(this))');
     } else {
       button.find('a').attr('onclick', 'return customSendUnitsFromReport(' + parameters + '))');
     }
-    button.closest('tr').attr('name', window.top.$.trim(eachParameter[1]));
+    button.closest('tr').attr('name', $.trim(eachParameter[1]));
   }
 }
 
 function addTableInfo() {
-  window.top.$('#am_widget_Farm tr th').slice(0, 1).after("<th></th>");
-  window.top.$('#am_widget_Farm tr:not(:first-child)').each(function(i) {
-    window.top.$(this).children("td").each(function(j) {
+  $('#am_widget_Farm tr th').slice(0, 1).after("<th></th>");
+  $('#am_widget_Farm tr:not(:first-child)').each(function(i) {
+    $(this).children("td").each(function(j) {
       switch (j) {
         case 1:
-          window.top.$(this).filter(":first").before("<td style='width:10px;font-weight:bold;' id='rowNum'>" + (i + 1) + "</td>")
+          $(this).filter(":first").before("<td style='width:10px;font-weight:bold;' id='rowNum'>" + (i + 1) + "</td>")
           break;
         case 3:
-          var attackImg = window.top.$(this).find('img');
-          var tooltip = window.top.$(this).find('img').prop('tooltipText');
+          var attackImg = $(this).find('img');
+          var tooltip = $(this).find('img').prop('tooltipText');
           if (typeof tooltip != 'undefined') {
             var numAttacks = tooltip.replace(/\D/g, '');
             attackImg.after("<span style='font-weight:bold;'> (" + numAttacks + ")</span>");
           }
           break;
         case 8:
-          setOnclick(window.top.$(this));
+          setOnclick($(this));
           break;
         case 9:
-          setOnclick(window.top.$(this));
+          setOnclick($(this));
           break;
         case 10:
-          setOnclick(window.top.$(this));
+          setOnclick($(this));
           break;
       }
     });
@@ -454,7 +464,7 @@ function addTableInfo() {
 }
 
 function checkIfNextVillage() {
-  current_units = window.top.Accountmanager.farm.current_units;
+  current_units = Accountmanager.farm.current_units;
   if (userset[s.next_village_scouts]) {
     var scouts = current_units.spy;
     if (scouts <= parseInt(userset[s.scouts_left])) {
@@ -464,8 +474,8 @@ function checkIfNextVillage() {
   }
   if (userset[s.next_village_farming_troops]) {
     var totalTroops = 0;
-    window.top.$('.fm_unit input:checked').each(function(i) {
-      var unitName = window.top.$(this).attr('name');
+    $('.fm_unit input:checked').each(function(i) {
+      var unitName = $(this).attr('name');
       totalTroops += parseInt(current_units[unitName]);
     });
     if (totalTroops <= parseInt(userset[s.farming_troops_left])) {
@@ -474,7 +484,7 @@ function checkIfNextVillage() {
     }
   }
   if (userset[s.next_village_no_farms]) {
-    if (window.top.$('#plunder_list tr:not(:first-child):visible').length == 0) {
+    if ($('#plunder_list tr:not(:first-child):visible').length == 0) {
       getNewVillage("n");
       return true;
     }
@@ -494,28 +504,28 @@ function applySettings() {
 }
 
 function applyFilters() {
-  window.top.$('#am_widget_Farm tr:gt(0)').each(function(i) {
-    hideRow = checkRowToHide(window.top.$(this), userset);
+  $('#am_widget_Farm tr:gt(0)').each(function(i) {
+    hideRow = checkRowToHide($(this), userset);
     if (hideRow) {
-      window.top.$(this).hide();
+      $(this).hide();
     }
   });
   changeHeader(filter_40);
   var topContainer = 0;
-  if (window.top.$('#topContainer').css('position') == "fixed") {
-    topContainer = window.top.$('#topContainer').height();
+  if ($('#topContainer').css('position') == "fixed") {
+    topContainer = $('#topContainer').height();
   }
-  if (window.top.$('*:contains("Bot Protection")').length) {
-    window.top.$('html, body').animate({
-      scrollTop: (window.top.$('*:contains("Bot Protection")').offset().top - topContainer)
+  if ($('*:contains("Bot Protection")').length) {
+    $('html, body').animate({
+      scrollTop: ($('*:contains("Bot Protection")').offset().top - topContainer)
     }, 500);
     if (typeof showNotification === 'function') {
       showNotification('custom', ['LA Enhancer has encountered bot protection. Please respond to captcha to continue farming.'], null, 'Bot Protection');
     }
     cansend = false;
   } else {
-    window.top.$('html, body').animate({
-      scrollTop: (window.top.$('#farm_units').offset().top - topContainer)
+    $('html, body').animate({
+      scrollTop: ($('#farm_units').offset().top - topContainer)
     }, 500);
   }
   filtersApplied = true;
@@ -526,27 +536,27 @@ function checkRowToHide(row, profileArray) {
   row.children("td").each(function(cell) {
     switch (cell) {
       case 2:
-        reportSettings(window.top.$(this), profileArray);
+        reportSettings($(this), profileArray);
         break;
       case 3:
-        haulSettings(window.top.$(this), profileArray);
+        haulSettings($(this), profileArray);
         break;
       case 4:
-        hideRecentlyFarmed(window.top.$(this), profileArray);
-        attackSettings(window.top.$(this), profileArray);
-        continentSettings(window.top.$(this), profileArray);
+        hideRecentlyFarmed($(this), profileArray);
+        attackSettings($(this), profileArray);
+        continentSettings($(this), profileArray);
         break;
       case 5:
-        hideTime(window.top.$(this), profileArray);
+        hideTime($(this), profileArray);
         break;
       case 6:
-        scoutReportSettings(window.top.$(this), profileArray);
+        scoutReportSettings($(this), profileArray);
         break;
       case 7:
-        wallSettings(window.top.$(this), profileArray);
+        wallSettings($(this), profileArray);
         break;
       case 8:
-        distanceSettings(window.top.$(this), profileArray);
+        distanceSettings($(this), profileArray);
         break;
     }
   });
@@ -560,14 +570,14 @@ function checkRowToHide(row, profileArray) {
 }
 
 function resetTable() {
-  window.top.$('#plunder_list tr').each(function(i) {
-    window.top.$(this).show()
+  $('#plunder_list tr').each(function(i) {
+    $(this).show()
   });
 }
 
 function setLocalStorageRow(village) {
   var localTitle = "sitter:" + sitter + ", village:" + village + ", world:" + getURL()[0];
-  window.top.$.jStorage.set(localTitle, getCurrentGameTime());
+  $.jStorage.set(localTitle, getCurrentGameTime());
 }
 
 /**********************************************************************
@@ -608,16 +618,19 @@ function reportSettings(cell, profileArray) {
 
 function haulSettings(cell, profileArray) {
   if (profileArray[s.enable_hauls]) {
+    		// Hides full hauls
     if (cell.html().indexOf("max_loot/1") >= 0 && profileArray[s.full]) {
       reason.push("Haul is full");
       hideRow = true;
       return;
     }
+    		// Hides partial hauls
     if (cell.html().indexOf("max_loot/0") >= 0 && profileArray[s.partial]) {
       reason.push("Haul is partial");
       hideRow = true;
       return;
     }
+    		// Hides scout reports
     if (cell.html().indexOf("max_loot") == -1 && (profileArray[s.full])) {
       reason.push("No haul graphic");
       hideRow = true;
@@ -630,7 +643,7 @@ function hideRecentlyFarmed(cell, profileArray) {
   if (profileArray[s.hide_recent_farms]) {
     var village = cell.closest('tr').attr('name');
     localTitle = "sitter:" + sitter + ", village:" + village + ", world:" + getURL()[0];
-    var sentTime = new Date(window.top.$.jStorage.get(localTitle));
+    var sentTime = new Date($.jStorage.get(localTitle));
     var t1 = currentGameTime;
     var t2 = sentTime;
     var dif = t1.getTime() - t2.getTime();
@@ -694,12 +707,12 @@ function continentSettings(cell, profileArray) {
   if (typeof continent != 'undefined') {
     continent = continent.substr(continent.length - 2);
     var filteredContinents = profileArray[s.continents_list].split('.');
-    if (window.top.$.inArray(continent, filteredContinents) >= 0 && profileArray[s.continent_display] == "hide") {
+    if ($.inArray(continent, filteredContinents) >= 0 && profileArray[s.continent_display] == "hide") {
       reason.push("Continent is set to hide");
       hideRow = true;
       return;
     }
-    if (window.top.$.inArray(continent, filteredContinents) == -1 && profileArray[s.continent_display] == "show") {
+    if ($.inArray(continent, filteredContinents) == -1 && profileArray[s.continent_display] == "show") {
       reason.push("Continent is not set to show");
       hideRow = true;
       return;
@@ -735,7 +748,7 @@ function hideTime(cell, profileArray) {
 function scoutReportSettings(cell, profileArray) {
   var total;
   if (profileArray[s.enable_scout]) {
-    if (window.top.$.trim(cell.find('span').html()) == "?") {
+    if ($.trim(cell.find('span').html()) == "?") {
       total = 0;
     } else {
       var wood = parseInt(cell.children('span').eq(0).html().replace(/\D+/g, ''));
@@ -776,7 +789,7 @@ function wallSettings(cell, profileArray) {
     if (wallLvl == '?') {
       wallLvl = 0;
     }
-    switch (window.top.$.trim(profileArray[s.wall_operator])) {
+    switch ($.trim(profileArray[s.wall_operator])) {
       case "greater_than":
         if (wallLvl > parseInt(profileArray[s.wall_value])) {
           reason.push("Wall too high");
@@ -805,7 +818,7 @@ function wallSettings(cell, profileArray) {
 function distanceSettings(cell, profileArray) {
   if (profileArray[s.enable_distances]) {
     var distanceLvl = cell.html();
-    switch (window.top.$.trim(profileArray[s.distance_operator])) {
+    switch ($.trim(profileArray[s.distance_operator])) {
       case "greater_than":
         if (parseFloat(distanceLvl) > parseFloat(profileArray[s.distance_value])) {
           reason.push("Village too far");
@@ -833,13 +846,13 @@ function distanceSettings(cell, profileArray) {
 
 //deletes local storage for recently farmed rows
 function deleteRecentlyFarmed() {
-  window.top.$('#am_widget_Farm tr:gt(0)').each(function(i) {
-    window.top.$(this).children("td").each(function(j) {
+  $('#am_widget_Farm tr:gt(0)').each(function(i) {
+    $(this).children("td").each(function(j) {
       if (j == 4) {
-        reportLinkText = window.top.$.trim(window.top.$(this).children("a").html());
+        reportLinkText = $.trim($(this).children("a").html());
         localTitle = "sitter:" + sitter + ", village:" + reportLinkText + ", world:" + getURL()[0];
-        if (window.top.$.jStorage.get(localTitle) != null) {
-          window.top.$.jStorage.deleteKey(localTitle);
+        if ($.jStorage.get(localTitle) != null) {
+          $.jStorage.deleteKey(localTitle);
         }
       }
     });
@@ -848,8 +861,8 @@ function deleteRecentlyFarmed() {
 
 //gets game time to compare to reports
 function getCurrentGameTime() {
-  var serverTime = window.top.$('#serverTime').html().split(':');
-  var serverDate = window.top.$('#serverDate').html().split('/');
+  var serverTime = $('#serverTime').html().split(':');
+  var serverDate = $('#serverDate').html().split('/');
   return new Date(serverDate[2], serverDate[1] - 1, serverDate[0], serverTime[0], serverTime[1], serverTime[2], 0);
 }
 
@@ -861,7 +874,7 @@ function getVillageAttackedTime(cell) {
   var attackTime;
   var cell;
   for (var i = 0; i < cellTime.length; i++) {
-    cell = window.top.$.trim(cellTime[i]);
+    cell = $.trim(cellTime[i]);
     if (cell.indexOf('.') > -1) {
       attackDay = cell;
     } else if (cell == filter_61) {
@@ -904,18 +917,18 @@ function getVillageAttackedTime(cell) {
  *	Settings profiles functionality
  */
 function loadDefaultProfile() {
-  if (window.top.$.jStorage.get("profile:" + profile_10) == null) {
-    window.top.$.jStorage.set("profile:" + profile_10, ["1", "1", "distance", "asc", false, false, false, false, false, false, false, false, "hide", "", false, false, false, false, "greater_than", "", false, "greater_than", "", false, "greater_than", "", false, "greater_than", "", "hide", "", false, "hide", "", false, false, false, "", false, "", false]);
-    window.top.$.jStorage.deleteKey("profileList");
-    window.top.$.jStorage.set("profileList", [profile_10]);
+  if ($.jStorage.get("profile:" + profile_10) == null) {
+    $.jStorage.set("profile:" + profile_10, ["1", "1", "distance", "asc", false, false, false, false, false, false, false, false, "hide", "", false, false, false, false, "greater_than", "", false, "greater_than", "", false, "greater_than", "", false, "greater_than", "", "hide", "", false, "hide", "", false, false, false, "", false, "", false]);
+    $.jStorage.deleteKey("profileList");
+    $.jStorage.set("profileList", [profile_10]);
   }
-  userset = window.top.$.jStorage.get("profile:" + profile_10);
+  userset = $.jStorage.get("profile:" + profile_10);
   loadProfile(profile_10);
-  window.top.$('#settingsProfile').val(profile_10);
+  $('#settingsProfile').val(profile_10);
 }
 
 function setDefaultProfile() {
-  if (window.top.$('#settingsProfile').val() == profile_10) {
+  if ($('#settingsProfile').val() == profile_10) {
     var newProfile = confirm(dialog_02);
     if (newProfile) {
       createProfile();
@@ -924,22 +937,22 @@ function setDefaultProfile() {
       return false;
     }
   } else {
-    var profile = window.top.$.jStorage.get("profile:" + window.top.$('#settingsProfile').val());
-    window.top.$.jStorage.set("profile:" + profile_10, profile);
+    var profile = $.jStorage.get("profile:" + $('#settingsProfile').val());
+    $.jStorage.set("profile:" + profile_10, profile);
   }
 }
 
 function fillProfileList() {
-  var profileList = window.top.$.jStorage.get("profileList");
-  window.top.$.each(profileList, function(i, val) {
-    window.top.$('#settingsProfile').append("<option value='" + val + "'>" + val + "</option>")
+  var profileList = $.jStorage.get("profileList");
+  $.each(profileList, function(i, val) {
+    $('#settingsProfile').append("<option value='" + val + "'>" + val + "</option>")
   });
-  window.top.$('#settingsProfile').val(window.top.$.jStorage.get("DefaultProfile"));
+  $('#settingsProfile').val($.jStorage.get("DefaultProfile"));
 }
 
 function createProfile() {
   var profileName = prompt(dialog_03 + ":");
-  if (window.top.$.inArray(profileName, window.top.$.jStorage.get("profileList")) != -1) {
+  if ($.inArray(profileName, $.jStorage.get("profileList")) != -1) {
     alert(dialog_04);
     createProfile();
     return false;
@@ -952,103 +965,103 @@ function createProfile() {
   var profiles;
   if (profileName != null && profileName != "") {
     var settings = [];
-    settings.push(window.top.$('#start_page').val());
-    settings.push(window.top.$('#end_page').val());
-    settings.push(window.top.$('#order_by').val());
-    settings.push(window.top.$('#direction').val());
-    settings.push(window.top.$('#all_none').prop('checked'));
-    settings.push(window.top.$('#blue').prop('checked'));
-    settings.push(window.top.$('#green').prop('checked'));
-    settings.push(window.top.$('#yellow').prop('checked'));
-    settings.push(window.top.$('#red_yellow').prop('checked'));
-    settings.push(window.top.$('#red_blue').prop('checked'));
-    settings.push(window.top.$('#red').prop('checked'));
-    settings.push(window.top.$('#hide_recent_farms').prop('checked'));
-    settings.push(window.top.$('#sent_time_filter').val());
-    settings.push(window.top.$('#hide_recent_time').val());
-    settings.push(window.top.$('#enable_hauls').prop('checked'));
-    settings.push(window.top.$('#full').prop('checked'));
-    settings.push(window.top.$('#partial').prop('checked'));
-    settings.push(window.top.$('#enable_attacks').prop('checked'));
-    settings.push(window.top.$('#attack_operator').val());
-    settings.push(window.top.$('#attack_value').val());
-    settings.push(window.top.$('#enable_walls').prop('checked'));
-    settings.push(window.top.$('#wall_operator').val());
-    settings.push(window.top.$('#wall_value').val());
-    settings.push(window.top.$('#enable_distances').prop('checked'));
-    settings.push(window.top.$('#distance_operator').val());
-    settings.push(window.top.$('#distance_value').val());
-    settings.push(window.top.$('#enable_scout').prop('checked'));
-    settings.push(window.top.$('#scout_report_operator').val());
-    settings.push(window.top.$('#haul_value').val());
-    settings.push(window.top.$('#continent_display').val());
-    settings.push(window.top.$('#continents_list').val());
-    settings.push(window.top.$('#enable_time').prop('checked'));
-    settings.push(window.top.$('#attack_time_filter').val());
-    settings.push(window.top.$('#time_value').val());
-    settings.push(window.top.$('#enable_auto_run').prop('checked'));
-    settings.push(window.top.$('#next_village_no_farms').prop('checked'));
-    settings.push(window.top.$('#next_village_scouts').prop('checked'));
-    settings.push(window.top.$('#scouts_left').val());
-    settings.push(window.top.$('#next_village_farming_troops').prop('checked'));
-    settings.push(window.top.$('#farming_troops_left').val());
-    settings.push(window.top.$('#next_village_units').prop('checked'));
-    window.top.$.jStorage.set("profile:" + profileName, settings);
-    var profileList = window.top.$.jStorage.get("profileList");
+    settings.push($('#start_page').val());
+    settings.push($('#end_page').val());
+    settings.push($('#order_by').val());
+    settings.push($('#direction').val());
+    settings.push($('#all_none').prop('checked'));
+    settings.push($('#blue').prop('checked'));
+    settings.push($('#green').prop('checked'));
+    settings.push($('#yellow').prop('checked'));
+    settings.push($('#red_yellow').prop('checked'));
+    settings.push($('#red_blue').prop('checked'));
+    settings.push($('#red').prop('checked'));
+    settings.push($('#hide_recent_farms').prop('checked'));
+    settings.push($('#sent_time_filter').val());
+    settings.push($('#hide_recent_time').val());
+    settings.push($('#enable_hauls').prop('checked'));
+    settings.push($('#full').prop('checked'));
+    settings.push($('#partial').prop('checked'));
+    settings.push($('#enable_attacks').prop('checked'));
+    settings.push($('#attack_operator').val());
+    settings.push($('#attack_value').val());
+    settings.push($('#enable_walls').prop('checked'));
+    settings.push($('#wall_operator').val());
+    settings.push($('#wall_value').val());
+    settings.push($('#enable_distances').prop('checked'));
+    settings.push($('#distance_operator').val());
+    settings.push($('#distance_value').val());
+    settings.push($('#enable_scout').prop('checked'));
+    settings.push($('#scout_report_operator').val());
+    settings.push($('#haul_value').val());
+    settings.push($('#continent_display').val());
+    settings.push($('#continents_list').val());
+    settings.push($('#enable_time').prop('checked'));
+    settings.push($('#attack_time_filter').val());
+    settings.push($('#time_value').val());
+    settings.push($('#enable_auto_run').prop('checked'));
+    settings.push($('#next_village_no_farms').prop('checked'));
+    settings.push($('#next_village_scouts').prop('checked'));
+    settings.push($('#scouts_left').val());
+    settings.push($('#next_village_farming_troops').prop('checked'));
+    settings.push($('#farming_troops_left').val());
+    settings.push($('#next_village_units').prop('checked'));
+    $.jStorage.set("profile:" + profileName, settings);
+    var profileList = $.jStorage.get("profileList");
     profileList.push(profileName);
-    window.top.$.jStorage.set("profileList", profileList)
-    window.top.$('#settingsProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
-    window.top.$('#priorityOneProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
-    window.top.$('#priorityTwoProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
-    window.top.$('#priorityThreeProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
-    window.top.$('#settingsProfile').val(profileName);
+    $.jStorage.set("profileList", profileList)
+    $('#settingsProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
+    $('#priorityOneProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
+    $('#priorityTwoProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
+    $('#priorityThreeProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
+    $('#settingsProfile').val(profileName);
   }
 }
 
 function loadProfile(profile) {
-  var settings = window.top.$.jStorage.get("profile:" + profile);
+  var settings = $.jStorage.get("profile:" + profile);
   userset = settings;
-  window.top.$('#start_page').val(settings[0]);
-  window.top.$('#end_page').val(settings[1]);
-  window.top.$('#order_by').val(settings[2]);
-  window.top.$('#direction').val(settings[3]);
-  window.top.$('#all_none').prop('checked', settings[4]);
-  window.top.$('#blue').prop('checked', settings[5]);
-  window.top.$('#green').prop('checked', settings[6]);
-  window.top.$('#yellow').prop('checked', settings[7]);
-  window.top.$('#red_yellow').prop('checked', settings[8]);
-  window.top.$('#red_blue').prop('checked', settings[9]);
-  window.top.$('#red').prop('checked', settings[10]);
-  window.top.$('#hide_recent_farms').prop('checked', settings[11]);
-  window.top.$('#sent_time_filter').val(settings[12]);
-  window.top.$('#hide_recent_time').val(settings[13]);
-  window.top.$('#enable_hauls').prop('checked', settings[14]);
-  window.top.$('#full').prop('checked', settings[15]);
-  window.top.$('#partial').prop('checked', settings[16]);
-  window.top.$('#enable_attacks').prop('checked', settings[17]);
-  window.top.$('#attack_operator').val(settings[18]);
-  window.top.$('#attack_value').val(settings[19]);
-  window.top.$('#enable_walls').prop('checked', settings[20]);
-  window.top.$('#wall_operator').val(settings[21]);
-  window.top.$('#wall_value').val(settings[22]);
-  window.top.$('#enable_distances').prop('checked', settings[23]);
-  window.top.$('#distance_operator').val(settings[24]);
-  window.top.$('#distance_value').val(settings[25]);
-  window.top.$('#enable_scout').prop('checked', settings[26]);
-  window.top.$('#scout_report_operator').val(settings[27]);
-  window.top.$('#haul_value').val(settings[28]);
-  window.top.$('#continent_display').val(settings[29]);
-  window.top.$('#continents_list').val(settings[30]);
-  window.top.$('#enable_time').prop('checked', settings[31]);
-  window.top.$('#attack_time_filter').val(settings[32]);
-  window.top.$('#time_value').val(settings[33]);
-  window.top.$('#enable_auto_run').prop('checked', settings[34]);
-  window.top.$('#next_village_no_farms').prop('checked', settings[35]);
-  window.top.$('#next_village_scouts').prop('checked', settings[36]);
-  window.top.$('#scouts_left').val(settings[37]);
-  window.top.$('#next_village_farming_troops').prop('checked', settings[38]);
-  window.top.$('#farming_troops_left').val(settings[39]);
-  window.top.$('#next_village_units').prop('checked', settings[40]);
+  $('#start_page').val(settings[0]);
+  $('#end_page').val(settings[1]);
+  $('#order_by').val(settings[2]);
+  $('#direction').val(settings[3]);
+  $('#all_none').prop('checked', settings[4]);
+  $('#blue').prop('checked', settings[5]);
+  $('#green').prop('checked', settings[6]);
+  $('#yellow').prop('checked', settings[7]);
+  $('#red_yellow').prop('checked', settings[8]);
+  $('#red_blue').prop('checked', settings[9]);
+  $('#red').prop('checked', settings[10]);
+  $('#hide_recent_farms').prop('checked', settings[11]);
+  $('#sent_time_filter').val(settings[12]);
+  $('#hide_recent_time').val(settings[13]);
+  $('#enable_hauls').prop('checked', settings[14]);
+  $('#full').prop('checked', settings[15]);
+  $('#partial').prop('checked', settings[16]);
+  $('#enable_attacks').prop('checked', settings[17]);
+  $('#attack_operator').val(settings[18]);
+  $('#attack_value').val(settings[19]);
+  $('#enable_walls').prop('checked', settings[20]);
+  $('#wall_operator').val(settings[21]);
+  $('#wall_value').val(settings[22]);
+  $('#enable_distances').prop('checked', settings[23]);
+  $('#distance_operator').val(settings[24]);
+  $('#distance_value').val(settings[25]);
+  $('#enable_scout').prop('checked', settings[26]);
+  $('#scout_report_operator').val(settings[27]);
+  $('#haul_value').val(settings[28]);
+  $('#continent_display').val(settings[29]);
+  $('#continents_list').val(settings[30]);
+  $('#enable_time').prop('checked', settings[31]);
+  $('#attack_time_filter').val(settings[32]);
+  $('#time_value').val(settings[33]);
+  $('#enable_auto_run').prop('checked', settings[34]);
+  $('#next_village_no_farms').prop('checked', settings[35]);
+  $('#next_village_scouts').prop('checked', settings[36]);
+  $('#scouts_left').val(settings[37]);
+  $('#next_village_farming_troops').prop('checked', settings[38]);
+  $('#farming_troops_left').val(settings[39]);
+  $('#next_village_units').prop('checked', settings[40]);
 }
 
 function changeProfile(profile) {
@@ -1058,73 +1071,73 @@ function changeProfile(profile) {
 }
 
 function deleteProfile() {
-  var profileName = window.top.$('#settingsProfile').val();
+  var profileName = $('#settingsProfile').val();
   if (profileName == profile_10) {
     alert(dialog_06);
   } else {
-    var profilesList = window.top.$.jStorage.get("profileList");
+    var profilesList = $.jStorage.get("profileList");
     profilesList.splice(profilesList.indexOf(profileName), 1);
-    window.top.$.jStorage.set("profileList", profilesList);
-    window.top.$.jStorage.deleteKey("profile:" + profileName);
-    window.top.$("#settingsProfile option[value='" + profileName + "']").remove();
-    window.top.$("#priorityOneProfile option[value='" + profileName + "']").remove();
-    window.top.$("#priorityTwoProfile option[value='" + profileName + "']").remove();
-    window.top.$("#priorityThreeProfile option[value='" + profileName + "']").remove();
+    $.jStorage.set("profileList", profilesList);
+    $.jStorage.deleteKey("profile:" + profileName);
+    $("#settingsProfile option[value='" + profileName + "']").remove();
+    $("#priorityOneProfile option[value='" + profileName + "']").remove();
+    $("#priorityTwoProfile option[value='" + profileName + "']").remove();
+    $("#priorityThreeProfile option[value='" + profileName + "']").remove();
     loadDefaultProfile(profile_10);
   }
 }
 
 function updateProfile() {
-  var profileName = window.top.$('#settingsProfile').val();
+  var profileName = $('#settingsProfile').val();
   var settings = [];
-  settings.push(window.top.$('#start_page').val());
-  settings.push(window.top.$('#end_page').val());
-  settings.push(window.top.$('#order_by').val());
-  settings.push(window.top.$('#direction').val());
-  settings.push(window.top.$('#all_none').prop('checked'));
-  settings.push(window.top.$('#blue').prop('checked'));
-  settings.push(window.top.$('#green').prop('checked'));
-  settings.push(window.top.$('#yellow').prop('checked'));
-  settings.push(window.top.$('#red_yellow').prop('checked'));
-  settings.push(window.top.$('#red_blue').prop('checked'));
-  settings.push(window.top.$('#red').prop('checked'));
-  settings.push(window.top.$('#hide_recent_farms').prop('checked'));
-  settings.push(window.top.$('#sent_time_filter').val());
-  settings.push(window.top.$('#hide_recent_time').val());
-  settings.push(window.top.$('#enable_hauls').prop('checked'));
-  settings.push(window.top.$('#full').prop('checked'));
-  settings.push(window.top.$('#partial').prop('checked'));
-  settings.push(window.top.$('#enable_attacks').prop('checked'));
-  settings.push(window.top.$('#attack_operator').val());
-  settings.push(window.top.$('#attack_value').val());
-  settings.push(window.top.$('#enable_walls').prop('checked'));
-  settings.push(window.top.$('#wall_operator').val());
-  settings.push(window.top.$('#wall_value').val());
-  settings.push(window.top.$('#enable_distances').prop('checked'));
-  settings.push(window.top.$('#distance_operator').val());
-  settings.push(window.top.$('#distance_value').val());
-  settings.push(window.top.$('#enable_scout').prop('checked'));
-  settings.push(window.top.$('#scout_report_operator').val());
-  settings.push(window.top.$('#haul_value').val());
-  settings.push(window.top.$('#continent_display').val());
-  settings.push(window.top.$('#continents_list').val());
-  settings.push(window.top.$('#enable_time').prop('checked'));
-  settings.push(window.top.$('#attack_time_filter').val());
-  settings.push(window.top.$('#time_value').val());
-  settings.push(window.top.$('#enable_auto_run').prop('checked'));
-  settings.push(window.top.$('#next_village_no_farms').prop('checked'));
-  settings.push(window.top.$('#next_village_scouts').prop('checked'));
-  settings.push(window.top.$('#scouts_left').val());
-  settings.push(window.top.$('#next_village_farming_troops').prop('checked'));
-  settings.push(window.top.$('#farming_troops_left').val());
-  settings.push(window.top.$('#next_village_units').prop('checked'));
-  window.top.$.jStorage.set("profile:" + profileName, settings);
+  settings.push($('#start_page').val());
+  settings.push($('#end_page').val());
+  settings.push($('#order_by').val());
+  settings.push($('#direction').val());
+  settings.push($('#all_none').prop('checked'));
+  settings.push($('#blue').prop('checked'));
+  settings.push($('#green').prop('checked'));
+  settings.push($('#yellow').prop('checked'));
+  settings.push($('#red_yellow').prop('checked'));
+  settings.push($('#red_blue').prop('checked'));
+  settings.push($('#red').prop('checked'));
+  settings.push($('#hide_recent_farms').prop('checked'));
+  settings.push($('#sent_time_filter').val());
+  settings.push($('#hide_recent_time').val());
+  settings.push($('#enable_hauls').prop('checked'));
+  settings.push($('#full').prop('checked'));
+  settings.push($('#partial').prop('checked'));
+  settings.push($('#enable_attacks').prop('checked'));
+  settings.push($('#attack_operator').val());
+  settings.push($('#attack_value').val());
+  settings.push($('#enable_walls').prop('checked'));
+  settings.push($('#wall_operator').val());
+  settings.push($('#wall_value').val());
+  settings.push($('#enable_distances').prop('checked'));
+  settings.push($('#distance_operator').val());
+  settings.push($('#distance_value').val());
+  settings.push($('#enable_scout').prop('checked'));
+  settings.push($('#scout_report_operator').val());
+  settings.push($('#haul_value').val());
+  settings.push($('#continent_display').val());
+  settings.push($('#continents_list').val());
+  settings.push($('#enable_time').prop('checked'));
+  settings.push($('#attack_time_filter').val());
+  settings.push($('#time_value').val());
+  settings.push($('#enable_auto_run').prop('checked'));
+  settings.push($('#next_village_no_farms').prop('checked'));
+  settings.push($('#next_village_scouts').prop('checked'));
+  settings.push($('#scouts_left').val());
+  settings.push($('#next_village_farming_troops').prop('checked'));
+  settings.push($('#farming_troops_left').val());
+  settings.push($('#next_village_units').prop('checked'));
+  $.jStorage.set("profile:" + profileName, settings);
   userset = settings;
 }
 
 function exportProfile() {
-  var profileName = window.top.$('#settingsProfile').val();
-  var settings = window.top.$.jStorage.get("profile:" + profileName);
+  var profileName = $('#settingsProfile').val();
+  var settings = $.jStorage.get("profile:" + profileName);
   if (profileName == profile_10) {
     alert(dialog_07);
   } else {
@@ -1137,8 +1150,8 @@ function importProfile() {
   profileSettings = profileSettings.split(",");
   var profileName = profileSettings[0];
   profileSettings.shift();
-  var profileList = window.top.$.jStorage.get("profileList");
-  if (window.top.$.inArray(profileName, profileList) != -1) {
+  var profileList = $.jStorage.get("profileList");
+  if ($.inArray(profileName, profileList) != -1) {
     alert(dialog_12);
     return false;
   } else {
@@ -1147,11 +1160,11 @@ function importProfile() {
         profileSettings[i] = parseBool(profileSettings[i]);
       }
     }
-    window.top.$.jStorage.set("profile:" + profileName, profileSettings);
+    $.jStorage.set("profile:" + profileName, profileSettings);
     profileList.push(profileName);
-    window.top.$.jStorage.set("profileList", profileList);
-    window.top.$('#settingsProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
-    window.top.$('#settingsProfile').val(profileName);
+    $.jStorage.set("profileList", profileList);
+    $('#settingsProfile').append("<option value='" + profileName + "'>" + profileName + "</option>");
+    $('#settingsProfile').val(profileName);
     loadProfile(profileName);
   }
 }
@@ -1159,12 +1172,12 @@ function importProfile() {
 /**********************************************************************
  *	Key Commands
  */
-window.top.$(document).off();
+$(document).off();
 function hotkeysOnOff() {
-  window.top.$('#settingsBody tr:lt(9) input,#settingsBody tr:lt(9) select').focusin(function() {
+  $('#settingsBody tr:lt(9) input,#settingsBody tr:lt(9) select').focusin(function() {
     window.onkeydown = function() {};
   });
-  window.top.$('#settingsBody tr:lt(9) input,#settingsBody tr:lt(9) select').focusout(function() {
+  $('#settingsBody tr:lt(9) input,#settingsBody tr:lt(9) select').focusout(function() {
     turnOnHotkeys();
   });
 }
@@ -1174,7 +1187,7 @@ function turnOnHotkeys() {
     if (editingKey) {
       editKey(e);
     } else {
-      var row = window.top.$("#plunder_list tr").filter(":visible").eq(1);
+      var row = $("#plunder_list tr").filter(":visible").eq(1);
       var aButton = row.children("td").eq(9).children("a");
       var bButton = row.children("td").eq(10).children("a");
       var cButton = row.children("td").eq(11).children("a");
@@ -1212,7 +1225,7 @@ function tryClick(button) {
   if (cansend && filtersApplied) {
     if (!checkIfNextVillage()) {
       if (button.hasClass("farm_icon_disabled") || button.html() == undefined) {
-        window.top.UI.ErrorMessage("That button is not selectable. Skipping row...", 500);
+        UI.ErrorMessage("That button is not selectable. Skipping row...", 500);
         button.closest('tr').hide();
       } else {
         button.click();
@@ -1235,46 +1248,46 @@ function doTime(millsec) {
 
 function editKey(e) {
   if ((e.keyCode <= 37 && e.keyCode >= 40) || (e.keyCode <= 48 && e.keyCode >= 90)) {
-    window.top.UI.ErrorMessage("You can only enter letters, numbers, or arrows. Plese try another key.", 1500);
+    UI.ErrorMessage("You can only enter letters, numbers, or arrows. Plese try another key.", 1500);
   } else {
     var keyToChar = String.fromCharCode(e.keyCode);
-    if (e.keyCode == 37){keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã‚Â";}
-    if (e.keyCode == 38){keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬Ëœ";}
-    if (e.keyCode == 39){keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢";}
-    if (e.keyCode == 40){keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬Å“";}
+    if (e.keyCode == 37){keyToChar = "←";}
+    if (e.keyCode == 38){keyToChar = "↑";}
+    if (e.keyCode == 39){keyToChar = "→";}
+    if (e.keyCode == 40){keyToChar = "↓";}
 
     switch (keyToEdit) {
       case "A":
         keycodes.a = e.keyCode;
-        window.top.$("#hotkey_value_a").val(keyToChar);
+        $("#hotkey_value_a").val(keyToChar);
         break;
       case "B":
         keycodes.b = e.keyCode;
-        window.top.$("#hotkey_value_b").val(keyToChar);
+        $("#hotkey_value_b").val(keyToChar);
         break;
       case "C":
         keycodes.c = e.keyCode;
-        window.top.$("#hotkey_value_c").val(keyToChar);
+        $("#hotkey_value_c").val(keyToChar);
         break;
       case "Master":
         keycodes.master = e.keyCode;
-        window.top.$("#hotkey_value_master").val(keyToChar);
+        $("#hotkey_value_master").val(keyToChar);
         break;
       case "Skip":
         keycodes.skip = e.keyCode;
-        window.top.$("#hotkey_value_skip").val(keyToChar);
+        $("#hotkey_value_skip").val(keyToChar);
         break;
       case "Left":
         keycodes.left = e.keyCode;
-        window.top.$("#hotkey_value_left").val(keyToChar);
+        $("#hotkey_value_left").val(keyToChar);
         break;
       case "Right":
         keycodes.right = e.keyCode;
-        window.top.$("#hotkey_value_right").val(keyToChar);
+        $("#hotkey_value_right").val(keyToChar);
         break;
       default: return;
     }
-    window.top.UI.SuccessMessage(keyToChar + " is now mapped to the " + keyToEdit + " button.");
+    UI.SuccessMessage(keyToChar + " is now mapped to the " + keyToEdit + " button.");
     updateKeypressSettings();
     editingKey = false;
   }
@@ -1282,84 +1295,84 @@ function editKey(e) {
 
 function updateKeypressSettings() {
   keyPressSettings.a_code = keycodes.a;
-  keyPressSettings.a_char = window.top.$("#hotkey_value_a").val();
+  keyPressSettings.a_char = $("#hotkey_value_a").val();
   keyPressSettings.b_code = keycodes.b;
-  keyPressSettings.b_char = window.top.$("#hotkey_value_b").val();
+  keyPressSettings.b_char = $("#hotkey_value_b").val();
   keyPressSettings.c_code = keycodes.c;
-  keyPressSettings.c_char = window.top.$("#hotkey_value_c").val();
+  keyPressSettings.c_char = $("#hotkey_value_c").val();
   keyPressSettings.master_code = keycodes.master;
-  keyPressSettings.master_char = window.top.$("#hotkey_value_master").val();
+  keyPressSettings.master_char = $("#hotkey_value_master").val();
   keyPressSettings.skip_code = keycodes.skip;
-  keyPressSettings.skip_char = window.top.$("#hotkey_value_skip").val();
+  keyPressSettings.skip_char = $("#hotkey_value_skip").val();
   keyPressSettings.left_code = keycodes.left;
-  keyPressSettings.left_char = window.top.$("#hotkey_value_left").val();
+  keyPressSettings.left_char = $("#hotkey_value_left").val();
   keyPressSettings.right_code = keycodes.right;
-  keyPressSettings.right_char = window.top.$("#hotkey_value_right").val();
-  keyPressSettings.priorityOneEnabled = window.top.$('#priorityOneEnabled').prop('checked');
-  keyPressSettings.priorityOneProfile = window.top.$('#priorityOneProfile').val();
-  keyPressSettings.priorityOneButton = window.top.$('#priorityOneButton').val();
-  keyPressSettings.priorityTwoEnabled = window.top.$('#priorityTwoEnabled').prop('checked');
-  keyPressSettings.priorityTwoProfile = window.top.$('#priorityTwoProfile').val();
-  keyPressSettings.priorityTwoButton = window.top.$('#priorityTwoButton').val();
-  keyPressSettings.priorityThreeEnabled = window.top.$('#priorityThreeEnabled').prop('checked');
-  keyPressSettings.priorityThreeProfile = window.top.$('#priorityThreeProfile').val();
-  keyPressSettings.priorityThreeButton = window.top.$('#priorityThreeButton').val();
-  keyPressSettings.defaultButton = window.top.$('#defaultButton').val();
-  window.top.$.jStorage.set("keyPressSettings", keyPressSettings);
+  keyPressSettings.right_char = $("#hotkey_value_right").val();
+  keyPressSettings.priorityOneEnabled = $('#priorityOneEnabled').prop('checked');
+  keyPressSettings.priorityOneProfile = $('#priorityOneProfile').val();
+  keyPressSettings.priorityOneButton = $('#priorityOneButton').val();
+  keyPressSettings.priorityTwoEnabled = $('#priorityTwoEnabled').prop('checked');
+  keyPressSettings.priorityTwoProfile = $('#priorityTwoProfile').val();
+  keyPressSettings.priorityTwoButton = $('#priorityTwoButton').val();
+  keyPressSettings.priorityThreeEnabled = $('#priorityThreeEnabled').prop('checked');
+  keyPressSettings.priorityThreeProfile = $('#priorityThreeProfile').val();
+  keyPressSettings.priorityThreeButton = $('#priorityThreeButton').val();
+  keyPressSettings.defaultButton = $('#defaultButton').val();
+  $.jStorage.set("keyPressSettings", keyPressSettings);
 }
 
 function fillKeypressSettings() {
-  if (window.top.$.jStorage.get('keyPressSettings') == null) {
-    window.top.$.jStorage.set('keyPressSettings', keyPressSettings);
+  if ($.jStorage.get('keyPressSettings') == null) {
+    $.jStorage.set('keyPressSettings', keyPressSettings);
   }
-  keyPressSettings = window.top.$.jStorage.get('keyPressSettings');
+  keyPressSettings = $.jStorage.get('keyPressSettings');
   keycodes.a = keyPressSettings.a_code;
-  window.top.$("#hotkey_value_a").val(keyPressSettings.a_char);
+  $("#hotkey_value_a").val(keyPressSettings.a_char);
   keycodes.b = keyPressSettings.b_code;
-  window.top.$("#hotkey_value_b").val(keyPressSettings.b_char);
+  $("#hotkey_value_b").val(keyPressSettings.b_char);
   keycodes.c = keyPressSettings.c_code;
-  window.top.$("#hotkey_value_c").val(keyPressSettings.c_char);
+  $("#hotkey_value_c").val(keyPressSettings.c_char);
   keycodes.master = keyPressSettings.master_code;
-  window.top.$("#hotkey_value_master").val(keyPressSettings.master_char);
+  $("#hotkey_value_master").val(keyPressSettings.master_char);
   keycodes.skip = keyPressSettings.skip_code;
-  window.top.$("#hotkey_value_skip").val(keyPressSettings.skip_char);
+  $("#hotkey_value_skip").val(keyPressSettings.skip_char);
   keycodes.left = keyPressSettings.left_code;
-  window.top.$("#hotkey_value_left").val(keyPressSettings.left_char);
+  $("#hotkey_value_left").val(keyPressSettings.left_char);
   keycodes.right = keyPressSettings.right_code;
-  window.top.$("#hotkey_value_right").val(keyPressSettings.right_char);
-  window.top.$('#priorityOneEnabled').prop('checked', keyPressSettings.priorityOneEnabled);
-  window.top.$('#priorityOneProfile').val(keyPressSettings.priorityOneProfile);
-  window.top.$('#priorityOneButton').val(keyPressSettings.priorityOneButton);
-  window.top.$('#priorityTwoEnabled').prop('checked', keyPressSettings.priorityTwoEnabled);
-  window.top.$('#priorityTwoProfile').val(keyPressSettings.priorityTwoProfile);
-  window.top.$('#priorityTwoButton').val(keyPressSettings.priorityTwoButton);
-  window.top.$('#priorityThreeEnabled').prop('checked', keyPressSettings.priorityThreeEnabled);
-  window.top.$('#priorityThreeProfile').val(keyPressSettings.priorityThreeProfile);
-  window.top.$('#priorityThreeButton').val(keyPressSettings.priorityThreeButton);
-  window.top.$('#defaultButton').val(keyPressSettings.defaultButton);
+  $("#hotkey_value_right").val(keyPressSettings.right_char);
+  $('#priorityOneEnabled').prop('checked', keyPressSettings.priorityOneEnabled);
+  $('#priorityOneProfile').val(keyPressSettings.priorityOneProfile);
+  $('#priorityOneButton').val(keyPressSettings.priorityOneButton);
+  $('#priorityTwoEnabled').prop('checked', keyPressSettings.priorityTwoEnabled);
+  $('#priorityTwoProfile').val(keyPressSettings.priorityTwoProfile);
+  $('#priorityTwoButton').val(keyPressSettings.priorityTwoButton);
+  $('#priorityThreeEnabled').prop('checked', keyPressSettings.priorityThreeEnabled);
+  $('#priorityThreeProfile').val(keyPressSettings.priorityThreeProfile);
+  $('#priorityThreeButton').val(keyPressSettings.priorityThreeButton);
+  $('#defaultButton').val(keyPressSettings.defaultButton);
 }
 
 function setKeyEditMode(n) {
   editingKey = true;
   keyToEdit = n;
-  window.top.UI.InfoMessage("Press any number, letter, or arrow key to set the hotkey for the <span style='font-weight:bold;'>" + n + "</span> button", 1500);
+  UI.InfoMessage("Press any number, letter, or arrow key to set the hotkey for the <span style='font-weight:bold;'>" + n + "</span> button", 1500);
   return false;
 }
 
 function fillMasterSettings() {
-  var profileList = window.top.$.jStorage.get("profileList");
-  window.top.$.each(profileList, function(i, val) {
-    window.top.$('#priorityOneProfile').append("<option value='" + val + "'>" + val + "</option>");
-    window.top.$('#priorityTwoProfile').append("<option value='" + val + "'>" + val + "</option>");
-    window.top.$('#priorityThreeProfile').append("<option value='" + val + "'>" + val + "</option>");
+  var profileList = $.jStorage.get("profileList");
+  $.each(profileList, function(i, val) {
+    $('#priorityOneProfile').append("<option value='" + val + "'>" + val + "</option>");
+    $('#priorityTwoProfile').append("<option value='" + val + "'>" + val + "</option>");
+    $('#priorityThreeProfile').append("<option value='" + val + "'>" + val + "</option>");
   });
 }
 
 function selectMasterButton(row) {
   var buttonToClick;
-  var p1 = window.top.$.jStorage.get("profile:" + keyPressSettings.priorityOneProfile);
-  var p2 = window.top.$.jStorage.get("profile:" + keyPressSettings.priorityTwoProfile);
-  var p3 = window.top.$.jStorage.get("profile:" + keyPressSettings.priorityThreeProfile);
+  var p1 = $.jStorage.get("profile:" + keyPressSettings.priorityOneProfile);
+  var p2 = $.jStorage.get("profile:" + keyPressSettings.priorityTwoProfile);
+  var p3 = $.jStorage.get("profile:" + keyPressSettings.priorityThreeProfile);
   var aButton = row.children("td").eq(9).children("a");
   var bButton = row.children("td").eq(10).children("a");
   var cButton = row.children("td").eq(11).children("a");
@@ -1399,54 +1412,57 @@ function setDefaultLanguage() {
   var domain = url.join('.');
   switch (domain) {
     case "fyletikesmaxes.gr":
-      window.top.$.jStorage.set("language", "el");
+      $.jStorage.set("language", "el");
       break;
     case "tribals.it":
-      window.top.$.jStorage.set("language", "it");
+      $.jStorage.set("language", "it");
       break;
     case "guerrastribales.es":
-      window.top.$.jStorage.set("language", "es");
+      $.jStorage.set("language", "es");
       break;
-    case "tribalwars.com.pt":
-      window.top.$.jStorage.set("language", "pt");
+    case "tribalwars.com.br", "tribalwars.com.pt":
+      $.jStorage.set("language", "pt");
       break;
     default:
-      window.top.$.jStorage.set("language", "en");
+      $.jStorage.set("language", "en");
       break;
   }
 }
 
 function loadLanguage(lang) {
-  window.top.$.jStorage.set("language", lang);
-  var profileList = window.top.$.jStorage.get("profileList");
-  var defaultProfile = window.top.$.jStorage.get("profile:" + profile_10);
-  if (window.top.$.inArray(lang, availableLangs) < 0) {
+  $.jStorage.set("language", lang);
+  var profileList = $.jStorage.get("profileList");
+  var defaultProfile = $.jStorage.get("profile:" + profile_10);
+  if ($.inArray(lang, availableLangs) < 0) {
     lang = "en";
   }
   var langFile = scriptURL + "lang/" + lang + ".js";
-  window.top.$.getScript(langFile, function() {
-    window.top.$('#settingsDiv').remove();
+  $.getScript(langFile, function() {
+    $('#settingsDiv').remove();
     profileList[0] = profile_10;
-    window.top.$.jStorage.set("profileList", profileList);
-    window.top.$.jStorage.set("profile:" + profile_10, defaultProfile);
+    $.jStorage.set("profileList", profileList);
+    $.jStorage.set("profile:" + profile_10, defaultProfile);
     changeHeader(filter_40);
     showSettings();
   });
 }
 
 function addLanguages() {
-  window.top.$('#language').append("<option value='en'>English</option>");
-  window.top.$('#language').append("<option value='el'>Arabe</option>");
-  window.top.$('#language').append("<option value='it'>Italiano</option>");
-  window.top.$('#language').append("<option value='es'>Espanhol</option>");
-  window.top.$('#language').append("<option value='pt'>Português</option>");
+  $('#language').append("<option value='en'>English</option>");
+  $('#language').append("<option value='el'>Arabe</option>");
+  $('#language').append("<option value='it'>Italiano</option>");
+  $('#language').append("<option value='es'>Espanhol</option>");
+  $('#language').append("<option value='pt'>Português</option>");
 }
 
 /**********************************************************************
  *	Helper functions
  */
 function parseBool(value) {
-  return (typeof value === "undefined") ? false : value.replace(/^\s+|\s+window.top.$/g, "").toLowerCase() === "true";
+  return (typeof value === "undefined") ?
+		false :
+		// trim using jQuery.trim()'s source
+value.replace(/^\s+|\s+$/g, "").toLowerCase() === "true";
 }
 
 function getURL() {
@@ -1456,7 +1472,7 @@ function getURL() {
 }
 
 function checkPage() {
-  if (!(window.top.game_data.screen === 'am_farm')) {
+  if (!(window.game_data.screen === 'am_farm')) {
     getFA();
   } else {
     run();
@@ -1466,33 +1482,33 @@ function checkPage() {
 function getFA() {
   fadeThanksToCheese();
   openLoader();
-  var vlink = link[0] + window.top.game_data.village.id + link[1];
-  window.top.$.getScript("https://" + window.top.location.host + "/js/game/Accountmanager.js", function() {
-    window.top.$.ajax({
+  var vlink = link[0] + window.game_data.village.id + link[1];
+  $.getScript("https://" + window.location.host + "/js/game/Accountmanager.js", function() {
+    $.ajax({
       type: "GET",
       url: vlink,
       dataType: "html",
       error: function(xhr, statusText, error) {
         alert("Get LA error: " + error);
-        window.top.$('#fader').remove();
-        window.top.$('#loaders').remove();
+        $('#fader').remove();
+        $('#loaders').remove();
       },
       success: function(data) {
-        var v = window.top.$(data);
+        var v = $(data);
         var titlePat = /<\s*title\s*>([^<]+)<\/title\s*>/g;
         var titleMatch = titlePat.exec(data);
         var title = titleMatch[1];
-        var newGameData = window.top.$.parseJSON(data.split("TribalWars.updateGameData(")[1].split(");")[0]);
-        window.top.game_data = newGameData;
+        var newGameData = $.parseJSON(data.split("TribalWars.updateGameData(")[1].split(");")[0]);
+        window.game_data = newGameData;
         if (typeof history !== 'undefined' && typeof history.pushState === 'function') {
-          history.pushState({}, window.top.game_data.village.name + " - Loot Assistant", "https://" + window.top.location.host + game_data.link_base_pure + 'am_farm');
+          history.pushState({}, window.game_data.village.name + " - Loot Assistant", "https://" + window.location.host + game_data.link_base_pure + 'am_farm');
         }
-        window.top.$('#header_info').html(window.top.$('#header_info', v).html());
-        window.top.$('#topContainer').html(window.top.$('#topContainer', v).html());
-        window.top.$('#contentContainer').html(window.top.$('#contentContainer', v).html());
-        window.top.$('head').find('title').html(title);
-        window.top.$('#fader').remove();
-        window.top.$('#loaders').remove();
+        $('#header_info').html($('#header_info', v).html());
+        $('#topContainer').html($('#topContainer', v).html());
+        $('#contentContainer').html($('#contentContainer', v).html());
+        $('head').find('title').html(title);
+        $('#fader').remove();
+        $('#loaders').remove();
         run();
       }
     });
@@ -1508,7 +1524,7 @@ function getFA() {
  */
 
 function fadeThanksToCheese() {
-  var fader = window.top.document.createElement('div');
+  var fader = document.createElement('div');
   fader.id = 'fader';
   fader.style.position = 'fixed';
   fader.style.height = '100%';
@@ -1518,65 +1534,65 @@ function fadeThanksToCheese() {
   fader.style.left = '0px';
   fader.style.opacity = '0.6';
   fader.style.zIndex = '12000';
-  window.top.document.body.appendChild(fader);
+  document.body.appendChild(fader);
 }
 
 function openLoader() {
-  var widget = window.top.document.createElement('div');
+  var widget = document.createElement('div');
   widget.id = 'loaders';
   widget.style.position = 'fixed';
   widget.style.width = '24px';
   widget.style.height = '24px';
   widget.style.top = '50%';
   widget.style.left = '50%';
-  window.top.$(widget).css("margin-left", "-12px");
-  window.top.$(widget).css("margin-top", "-12px");
+  $(widget).css("margin-left", "-12px");
+  $(widget).css("margin-top", "-12px");
   widget.style.zIndex = 13000;
-  window.top.$(widget).append(window.top.$("<img src='graphic/throbber.gif' height='24' width='24'></img>"));
-  window.top.$('#contentContainer').append(window.top.$(widget));
+  $(widget).append($("<img src='graphic/throbber.gif' height='24' width='24'></img>"));
+  $('#contentContainer').append($(widget));
 }
 
 function makeItPretty() {
-  window.top.$('.row_a').css("background-color", "rgb(216, 255, 216)");
-  window.top.$('#plunder_list tr').eq(0).remove();
-  window.top.$('#plunder_list').find('tr:gt(0)').each(function(index) {
-    window.top.$(this).removeClass('row_a');
-    window.top.$(this).removeClass('row_b');
+  $('.row_a').css("background-color", "rgb(216, 255, 216)");
+  $('#plunder_list tr').eq(0).remove();
+  $('#plunder_list').find('tr:gt(0)').each(function(index) {
+    $(this).removeClass('row_a');
+    $(this).removeClass('row_b');
     if (index % 2 == 0) {
-      window.top.$(this).addClass('row_a');
+      $(this).addClass('row_a');
     } else {
-      window.top.$(this).addClass('row_b');
+      $(this).addClass('row_b');
     }
   });
   hideStuffs();
 }
 
 function hideStuffs() {
-  window.top.$('#plunder_list').hide();
-  window.top.$('#plunder_list_nav').hide();
-  window.top.$('#contentContainer').find('div[class="vis"]').eq(0).children().eq(0).append(window.top.$("<div class='vis' style='float:right;text-align:center;line-height:100%;width:12px;height:12px;margin:0px 0px 0px 0px;position:relative;background-color:tan;opacity:.7'><a href='#' num='0' onclick='uglyHider(window.top.$(this));return false;'>+</a></div>"));
-  window.top.$('#contentContainer').find('div[class="vis"]').eq(0).children().eq(1).hide();
-  window.top.$('#am_widget_Farm').find('h4').eq(0).append(window.top.$("<div class='vis' style='float:right;text-align:center;line-height:100%;width:12px;height:12px;margin:0px 0px 0px 0px;position:relative;background-color:tan;opacity:.7'><a href='#' num='1' onclick='uglyHider(window.top.$(this));return false;'>+</a></div>"));
-  window.top.$('#plunder_list_filters').hide();
+  $('#plunder_list').hide();
+  $('#plunder_list_nav').hide();
+  $('#contentContainer').find('div[class="vis"]').eq(0).children().eq(0).append($("<div class='vis' style='float:right;text-align:center;line-height:100%;width:12px;height:12px;margin:0px 0px 0px 0px;position:relative;background-color:tan;opacity:.7'><a href='#' num='0' onclick='uglyHider($(this));return false;'>+</a></div>"));
+  $('#contentContainer').find('div[class="vis"]').eq(0).children().eq(1).hide();
+  $('#am_widget_Farm').find('h4').eq(0).append($("<div class='vis' style='float:right;text-align:center;line-height:100%;width:12px;height:12px;margin:0px 0px 0px 0px;position:relative;background-color:tan;opacity:.7'><a href='#' num='1' onclick='uglyHider($(this));return false;'>+</a></div>"));
+  $('#plunder_list_filters').hide();
 }
 
 function uglyHider(linker) {
   var basd;
-  if (window.top.$('#settingsBody').length > 0) {
+  if ($('#settingsBody').length > 0) {
     basd = 2;
   } else {
     basd = 1;
   }
-  if (window.top.$(linker).text() === "+") {
-    window.top.$(linker).text("-");
+  if ($(linker).text() === "+") {
+    $(linker).text("-");
   } else {
-    window.top.$(linker).text("+");
+    $(linker).text("+");
   }
-  if (parseInt(window.top.$(linker).attr('num')) == 0) {
-    window.top.$('#contentContainer').find('div[class="vis"]').eq(basd).children().eq(1).toggle();
-  } else if (parseInt(window.top.$(linker).attr('num')) == 1) {
-    window.top.$('#plunder_list_filters').toggle();
-  } else if (parseInt(window.top.$(linker).attr('num')) == 2) {
-    window.top.$('#settingsBody').toggle();
+  if (parseInt($(linker).attr('num')) == 0) {
+    $('#contentContainer').find('div[class="vis"]').eq(basd).children().eq(1).toggle();
+  } else if (parseInt($(linker).attr('num')) == 1) {
+    $('#plunder_list_filters').toggle();
+  } else if (parseInt($(linker).attr('num')) == 2) {
+    $('#settingsBody').toggle();
   }
 }
