@@ -1,13 +1,13 @@
 //Língua Portuguesa - pt/BR
 //Tradutor: Clezio Marcos
-var filter_01 = "Configurações do FA Filter";
+var filter_01 = "LA Filter";
 var filter_02 = "Instruções";
-var filter_03 = "Criado por";
+var filter_03 = "by";
 var filter_04 = "Carregar páginas";
 var filter_05 = "de";
 var filter_06 = "Ativar";
 var filter_07 = "Ocultar todos";
-var filter_08 = "Ataque de Explorador";
+var filter_08 = "Ataque de Batedores";
 var filter_09 = "Vitória total";
 var filter_10 = "Algumas perdas";
 var filter_11 = "Derrotado, mas danificou edifício(s)";
@@ -86,10 +86,10 @@ var dialog_13 = "Recarregue este script para ver o novo idioma. Esta página ser
 var profile_01 = "Perfil de configurações";
 var profile_02 = "Aplicar";
 var profile_03 = "Reiniciar";
-var profile_04 = "Novo";
-var profile_05 = "Definir padrão";
-var profile_06 = "Excluir";
-var profile_07 = "Atualizar";
+var profile_04 = "Criar Novo";
+var profile_05 = "Definir Padrão";
+var profile_06 = "Eliminar";
+var profile_07 = "Guardar alterações";
 var profile_08 = "Exportar";
 var profile_09 = "Importar";
 var profile_10 = "Padrão";
