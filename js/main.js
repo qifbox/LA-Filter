@@ -18,8 +18,8 @@ var keyToEdit;
 var current_units;
 var currentGameTime = getCurrentGameTime();
 var sitter = "";
-if (window.top.game_data.player.sitter != "0") {
-  sitter = "t=" + window.top.game_data.player.id + "&";
+if (window.game_data.player.sitter != "0") {
+  sitter = "t=" + window.game_data.player.id + "&";
 }
 var link = ["https://" + window.location.host + "/game.php?" + sitter + "village=", "&screen=am_farm"];
 var userset;
@@ -103,7 +103,7 @@ var keyPressSettings = {
 };
 var availableLangs = ["en", "es", "el", "pt", "it"];
 
-function run() {
+function run(){
   checkVersion();
   checkWorking();
   setVersion();
@@ -123,17 +123,20 @@ function checkVersion() {
       callback: null,
       confirm: true
     }];
-    if (clearProfiles) {
+    if(clearProfiles){
       var profileList = window.top.$.jStorage.get("profileList");
       window.top.$.each(profileList, function(i, val) {
         window.top.$.jStorage.deleteKey("profile:" + val);
       });
       window.top.$.jStorage.set("keyPressSettings", keyPressSettings);
       Dialog.show("update_dialog", "This script has recently been updated to version <span style='font-weight:bold;'>" + version + "</span> and in order for the new version to work, all profiles and settings must be reset. Sorry for any inconvenience.<br /><br/><a href='" + updateNotesURL + "' target='_blank'>See what's new</a>.</br>I removed the difference between the original and the Alt version of the script. Both are now equally fast and even faster than either script was before. Should you  enounter any issues, please contact me on the forum! </br></br>Enjoy!</br>Ibra Gonza II");
-    } else {
+    } else{
       Dialog.show("update_dialog", "This script has recently been updated to version <span style='font-weight:bold;'>" + version + "</span><br /><br/><a href='" + updateNotesURL + "' target='_blank'>See what's new</a>.</br>I removed the difference between the original and the Alt version of the script. Both are now equally fast and even faster than either script was before. Should you  enounter any issues, please contact me on the forum! </br></br>Enjoy!</br>Ibra Gonza II");
     }
-  } else {}
+
+  } else {
+		//UI.SuccessMessage("Welcome to LA Enhancer", 1000);
+  }
 }
 
 function checkWorking() {
@@ -168,6 +171,9 @@ function getVersion() {
   return ver;
 }
 
+/**********************************************************************
+ *	 Auto page loading and settings creation
+ */
 function showAllRows() {
   var pages = window.top.$.trim(window.top.$('#plunder_list_nav tr:first td:last').children().last().html().replace(/\D+/g, ''));
   if (window.top.$('#end_page').val() == "max") {
@@ -194,6 +200,7 @@ function getPage(i, pages) {
         console.log("Get page failed with error: " + error);
       },
       success: function(data) {
+        console.log($(data));
         window.top.$('#plunder_list tr', data).slice(2).each(function() {
           window.top.$('#plunder_list tr:last').after("<tr>" + window.top.$(this).html() + "</tr>");
         });
@@ -232,7 +239,7 @@ function getNewVillage(way) {
     window.top.UI.InfoMessage('Switching to next village...', 500);
   else
     window.top.UI.InfoMessage('Switching to previous village...', 500);
-  window.onkeydown = function() {};
+  window.onkeydown = function(){};
   cansend = false;
   filtersApplied = false;
   Timing.pause();
@@ -312,11 +319,15 @@ function removeFirstPage() {
   window.top.$('#plunder_list_nav').hide();
 }
 
+/**********************************************************************
+ *	 Table formatting
+ */
 function customSendUnits(link, target_village, template_id, button) {
-  if (!checkIfNextVillage()) {
+  if (!checkIfNextVillage()){
     button.closest("tr").hide();
     link = window.top.$(link);
     if (link.hasClass('farm_icon_disabled')) return false;
+    
     var data = {
       target: target_village,
       template_id: template_id,
@@ -458,6 +469,9 @@ function checkIfNextVillage() {
   }
 }
 
+/**********************************************************************
+ *	Filtering table with settings
+ */
 function applySettings() {
   if (!pagesLoaded) {
     setTimeout(showAllRows(), 1);
@@ -544,6 +558,9 @@ function setLocalStorageRow(village) {
   window.top.$.jStorage.set(localTitle, getCurrentGameTime());
 }
 
+/**********************************************************************
+ *	Settings logic
+ */
 function reportSettings(cell, profileArray) {
   if (cell.html().indexOf("blue") >= 0 && profileArray[s.blue]) {
     reason.push("Report is blue");
@@ -714,6 +731,7 @@ function scoutReportSettings(cell, profileArray) {
       var iron = parseInt(cell.children('span').eq(2).html().replace(/\D+/g, ''));
       total = wood + clay + iron;
     }
+
     switch (profileArray[s.scout_report_operator]) {
       case "greater_than":
         if (total > parseInt(profileArray[s.haul_value])) {
@@ -801,6 +819,7 @@ function distanceSettings(cell, profileArray) {
   }
 }
 
+//deletes local storage for recently farmed rows
 function deleteRecentlyFarmed() {
   window.top.$('#am_widget_Farm tr:gt(0)').each(function(i) {
     window.top.$(this).children("td").each(function(j) {
@@ -815,12 +834,14 @@ function deleteRecentlyFarmed() {
   });
 }
 
+//gets game time to compare to reports
 function getCurrentGameTime() {
   var serverTime = window.top.$('#serverTime').html().split(':');
   var serverDate = window.top.$('#serverDate').html().split('/');
   return new Date(serverDate[2], serverDate[1] - 1, serverDate[0], serverTime[0], serverTime[1], serverTime[2], 0);
 }
 
+//helper function for time filters
 function getVillageAttackedTime(cell) {
   var time = cell.html();
   var cellTime = time.split(' ');
@@ -867,6 +888,9 @@ function getVillageAttackedTime(cell) {
   }
 }
 
+/**********************************************************************
+ *	Settings profiles functionality
+ */
 function loadDefaultProfile() {
   if (window.top.$.jStorage.get("profile:" + profile_10) == null) {
     window.top.$.jStorage.set("profile:" + profile_10, ["1", "1", "distance", "asc", false, false, false, false, false, false, false, false, "hide", "", false, false, false, false, "greater_than", "", false, "greater_than", "", false, "greater_than", "", false, "greater_than", "", "hide", "", false, "hide", "", false, false, false, "", false, "", false]);
@@ -1119,8 +1143,11 @@ function importProfile() {
     loadProfile(profileName);
   }
 }
-window.top.$(document).off();
 
+/**********************************************************************
+ *	Key Commands
+ */
+window.top.$(document).off();
 function hotkeysOnOff() {
   window.top.$('#settingsBody tr:lt(9) input,#settingsBody tr:lt(9) select').focusin(function() {
     window.onkeydown = function() {};
@@ -1162,8 +1189,7 @@ function turnOnHotkeys() {
         case keycodes.right:
           getNewVillage("n");
           break;
-        default:
-          return;
+        default: return;
       }
     }
     e.preventDefault();
@@ -1173,7 +1199,6 @@ function turnOnHotkeys() {
 function tryClick(button) {
   if (cansend && filtersApplied) {
     if (!checkIfNextVillage()) {
-      console.log(button.html());
       if (button.hasClass("farm_icon_disabled") || button.html() == undefined) {
         window.top.UI.ErrorMessage("That button is not selectable. Skipping row...", 500);
         button.closest('tr').hide();
@@ -1201,18 +1226,11 @@ function editKey(e) {
     window.top.UI.ErrorMessage("You can only enter letters, numbers, or arrows. Plese try another key.", 1500);
   } else {
     var keyToChar = String.fromCharCode(e.keyCode);
-    if (e.keyCode == 37) {
-      keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã‚Â";
-    }
-    if (e.keyCode == 38) {
-      keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬Ëœ";
-    }
-    if (e.keyCode == 39) {
-      keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢";
-    }
-    if (e.keyCode == 40) {
-      keyToChar = "ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬Å“";
-    }
+    if (e.keyCode == 37){keyToChar = "←";}
+    if (e.keyCode == 38){keyToChar = "↑";}
+    if (e.keyCode == 39){keyToChar = "→";}
+    if (e.keyCode == 40){keyToChar = "↓";}
+
     switch (keyToEdit) {
       case "A":
         keycodes.a = e.keyCode;
@@ -1242,8 +1260,7 @@ function editKey(e) {
         keycodes.right = e.keyCode;
         window.top.$("#hotkey_value_right").val(keyToChar);
         break;
-      default:
-        return;
+      default: return;
     }
     window.top.UI.SuccessMessage(keyToChar + " is now mapped to the " + keyToEdit + " button.");
     updateKeypressSettings();
@@ -1360,6 +1377,9 @@ function selectMasterButton(row) {
   }
 }
 
+/**********************************************************************
+ *	Language functions
+ */
 function setDefaultLanguage() {
   var url = getURL();
   if (url.length == 3)
@@ -1375,7 +1395,7 @@ function setDefaultLanguage() {
     case "guerrastribales.es":
       window.top.$.jStorage.set("language", "es");
       break;
-    case "tribalwars.com.br":
+    case "tribalwars.com.pt":
       window.top.$.jStorage.set("language", "pt");
       break;
     default:
@@ -1410,6 +1430,9 @@ function addLanguages() {
   window.top.$('#language').append("<option value='pt'>Português</option>");
 }
 
+/**********************************************************************
+ *	Helper functions
+ */
 function parseBool(value) {
   return (typeof value === "undefined") ? false : value.replace(/^\s+|\s+window.top.$/g, "").toLowerCase() === "true";
 }
@@ -1421,7 +1444,6 @@ function getURL() {
 }
 
 function checkPage() {
-  console.log("checkPage");
   if (!(window.top.game_data.screen === 'am_farm')) {
     getFA();
   } else {
@@ -1430,7 +1452,6 @@ function checkPage() {
 }
 
 function getFA() {
-  console.log("getFA");
   fadeThanksToCheese();
   openLoader();
   var vlink = link[0] + window.top.game_data.village.id + link[1];
@@ -1460,12 +1481,19 @@ function getFA() {
         window.top.$('head').find('title').html(title);
         window.top.$('#fader').remove();
         window.top.$('#loaders').remove();
-        console.log("getFA");
         run();
       }
     });
   });
 }
+/*
+ function getFA(){
+ fadeThanksToCheese();
+ openLoader();
+ var vlink = link[0] + window.game_data.village.id + link[1];
+ window.location = vlink;
+ }
+ */
 
 function fadeThanksToCheese() {
   var fader = window.top.document.createElement('div');
@@ -1509,7 +1537,6 @@ function makeItPretty() {
     }
   });
   hideStuffs();
-  console.log("makeItPretty");
 }
 
 function hideStuffs() {
