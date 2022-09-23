@@ -1,6 +1,6 @@
 var version = "1.13.1 Fixed By Ibra";
 var scriptName = "LA Enhancer (1.13.1) - Fixed by Ibra Gonza II";
-var scriptURL = "https://github.com/qifbox/LA-Filter-PT-v2/";
+var scriptURL = "https://cdn.jsdelivr.net/gh/qifbox/LA-Filter-PT-v3/";
 var updateNotesURL = "https://forum.tribalwars.net/index.php?threads/ntoombs19s-fa-filter.266604/page-15#post-7053294";
 var working = true;
 var resourcesLoaded = false;
