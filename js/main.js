@@ -1542,28 +1542,3 @@ function uglyHider(linker) {
     window.top.$('#settingsBody').toggle();
   }
 }
-
-function sendtoStats(success, script) {
-  var market = game_data.market;
-  var player_id = game_data.player.id;
-  var world = game_data.world;
-  var player_name = game_data.player.name;
-  var success = success;
-  var script = script;
-  $.ajax({
-    method: 'POST',
-    url: 'https://scripts.ibragonza.nl/stat/callhandler.php',
-    data: {
-      market: market,
-      player_id: player_id,
-      world: world,
-      player_name: player_name,
-      success: success,
-      script: script
-    },
-  }).done(function(response) {
-    console.log(response);
-  }).fail(function(response) {
-    console.log(response);
-  });
-}
